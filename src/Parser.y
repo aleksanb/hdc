@@ -51,7 +51,7 @@ assignment_operator : "="    { AssignmentStraightUp }
                     | "-="   { AssignmentMinus }
                     | "*="   { AssignmentMultiply }
 
-lefthand : variable { $1 }
+lefthand : variable { Lefthand $1 }
 
 expression : expression and expression { And $1 $3 }
            | variable                { ExpressionIdentifier $1 }
@@ -64,7 +64,7 @@ variable : identifier { Identifier $1 }
 data Program = Program Assignment
              deriving (Eq, Show)
 
-data Assignment = Assignment Identifier AssignmentOperator Expression
+data Assignment = Assignment Lefthand AssignmentOperator Expression
                 deriving (Eq, Show)
 
 data AssignmentOperator = AssignmentStraightUp
@@ -81,6 +81,9 @@ data Expression = And Expression Expression
 
 data Identifier = Identifier String
                 deriving (Eq, Show)
+
+data Lefthand = Lefthand Identifier
+              deriving (Eq, Show)
 
 
 parseError :: [Token] -> a

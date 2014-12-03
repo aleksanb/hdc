@@ -1,10 +1,10 @@
-var x = $id_high & 63
-var y = $id_low >> 6
+x = $id_high & 63
+y = $id_low >> 6
 
-var edge_offset = $constants[10]
-var other_edge_offset = 64 - edge_offset
+edge_offset = $constants[10]
+other_edge_offset = 64 - edge_offset
 
-$mask |=
+mask |=
   x in [edge_offset, other_edge_offset]
   && edge_offset < y < other_edge_offset
 
@@ -18,4 +18,5 @@ $mask |=
 
 $address = $id
 $data = $mask ? 0xffff : `rgb(0, 0, 255)`
+
 store!

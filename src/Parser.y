@@ -40,10 +40,9 @@ import Tokenizer
 
 %%
 
-statement : assignment       { $1 }
+program : assignment       { Program $1 }
 
-
-assignment : lefthand assignment_operator expression { $1 $2 $3 }
+assignment : lefthand assignment_operator expression { Assignment $1 $2 $3 }
 
 assignment_operator : "="    { AssignmentStraightUp }
                     | "|="   { AssignmentOr }
@@ -52,23 +51,21 @@ assignment_operator : "="    { AssignmentStraightUp }
                     | "-="   { AssignmentMinus }
                     | "*="   { AssignmentMultiply }
 
-lefthand : identifier { $1 }
+lefthand : variable { $1 }
 
-expression : expression and expression { $1 And $3 }
-           | identifier                { $1 }
+expression : expression and expression { And $1 $3 }
+           | variable                { ExpressionIdentifier $1 }
+
+
+variable : identifier { Identifier $1 }
 
 {
 
-data Statement = Assignment
-               deriving (Eq, Show)
+data Program = Program Assignment
+             deriving (Eq, Show)
 
-data Assignment = Lefthand AssignmentOperator Expression
+data Assignment = Assignment Identifier AssignmentOperator Expression
                 deriving (Eq, Show)
-
-data Identifier = Identifier String
-
-data Lefthand = Identifier
-              | SomethingElse
 
 data AssignmentOperator = AssignmentStraightUp
                         | AssignmentOr
@@ -78,16 +75,18 @@ data AssignmentOperator = AssignmentStraightUp
                         | AssignmentMultiply
                         deriving (Eq, Show)
 
-data ExpressionOp = And
-                  deriving (Eq, Show)
+data Expression = And Expression Expression
+                | ExpressionIdentifier Identifier 
+                deriving (Eq, Show)
 
-data Expression = Expression ExpressionOp Expression
-                | Identifier
+data Identifier = Identifier String
                 deriving (Eq, Show)
 
 
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
-parse = parser
+parse :: String -> Program
+parse = parser . tokenize
+
 }

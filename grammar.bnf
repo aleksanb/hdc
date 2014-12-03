@@ -1,0 +1,58 @@
+statement ::= assignment | builtin
+
+builtin ::= "store!" | "load!"
+
+assignment ::= lefthand assignment_operator expression
+
+assignment_operator ::= "=" |
+                          "&=" |
+                          "|=" |
+                          "^=" |
+                          "+=" |
+                          "-=" |
+                          "*="
+
+expression ::= expression 'and' expression |
+               expression 'or' expression |
+               expression 'in' list |
+               expression '?' expression ':' expression |
+               expression '<' expression '<' expression |
+               expression '>' expression '>' expression |
+               expression '+' expression |
+               expression '-' expression |
+               expression '*' expression |
+               expression '&' expression |
+               expression '|' expression |
+               expression '^' expression |
+               expression '<' expression |
+               expression '>' expression |
+               expression '==' expression |
+               expression '<<' expression |
+               expression '>>>' expression |
+               expression '>>' expression |
+               '-' expression |
+               '(' expression ')' |
+               lefthand |
+               constant |
+               immediate
+
+list ::= '[' element_list ']'
+element_list ::= element_list, list_element |
+                 list_element
+list_element ::= lefthand | constant | immediate
+
+lefthand ::= variable_name | "$" register_name
+
+
+register_name ::= 'id_hi' |
+                  'id_low' |
+                  'id' |
+                  'address_hi' |
+                  'address_low' |
+                  'address' |
+                  'data' |
+                  'mask'
+
+variable ::= IDENTIFIER_VARIABLE
+constant ::= '$constant[' INTEGER ']'
+immediate ::= INTEGER | BINARY | HEX

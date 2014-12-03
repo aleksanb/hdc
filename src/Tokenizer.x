@@ -13,66 +13,66 @@ tokens :-
   $eol              ;
   $white+           ;
   "#".*             ;
-  $digit+           { \s -> Int (read s) }
-  "0x"$hexdigit+    { \s -> HexInt (read s) }
-  in                { \s -> In }
-  and               { \s -> And }
-  or                { \s -> Or }
-  "?"               { \s -> QuestionMark }
-  ":"               { \s -> Colon }
-  "+"               { \s -> Plus }
-  "-"               { \s -> Minus }
-  "*"               { \s -> Multiply }
-  "<<"              { \s -> ShiftLeft }
-  ">>"              { \s -> ShiftRight }
-  ">>>"             { \s -> ShiftRightArithmetic }
-  "<"               { \s -> LessThan }
-  ">"               { \s -> GreaterThan }
-  "=="              { \s -> Equal }
-  "&"               { \s -> BinaryAnd }
-  "|"               { \s -> BinaryOr }
-  "^"               { \s -> BinaryXor }
-  "="               { \s -> Assignment }
-  "|="              { \s -> AssignmentOr }
-  "&="              { \s -> AssignmentAnd }
-  "+="              { \s -> AssignmentPlus }
-  "-="              { \s -> AssignmentMinus }
-  "*="              { \s -> AssignmentMultiply }
-  \(                { \s -> LParen }
-  \)                { \s -> RParen }
+  $digit+           { \s -> TokenInt (read s) }
+  "0x"$hexdigit+    { \s -> TokenHexInt (read s) }
+  in                { \s -> TokenIn }
+  and               { \s -> TokenAnd }
+  or                { \s -> TokenOr }
+  "?"               { \s -> TokenQuestionMark }
+  ":"               { \s -> TokenColon }
+  "+"               { \s -> TokenPlus }
+  "-"               { \s -> TokenMinus }
+  "*"               { \s -> TokenMultiply }
+  "<<"              { \s -> TokenShiftLeft }
+  ">>"              { \s -> TokenShiftRight }
+  ">>>"             { \s -> TokenShiftRightArithmetic }
+  "<"               { \s -> TokenLessThan }
+  ">"               { \s -> TokenGreaterThan }
+  "=="              { \s -> TokenEqual }
+  "&"               { \s -> TokenBinaryAnd }
+  "|"               { \s -> TokenBinaryOr }
+  "^"               { \s -> TokenBinaryXor }
+  "="               { \s -> TokenAssignment }
+  "|="              { \s -> TokenAssignmentOr }
+  "&="              { \s -> TokenAssignmentAnd }
+  "+="              { \s -> TokenAssignmentPlus }
+  "-="              { \s -> TokenAssignmentMinus }
+  "*="              { \s -> TokenAssignmentMultiply }
+  \(                { \s -> TokenLParen }
+  \)                { \s -> TokenRParen }
 
-  $character+       { \s -> Identifier s }
+  $character+       { \s -> TokenIdentifier s }
 
 {
 
-data Token = In
-           | And
-           | Or
-           | QuestionMark
-           | Colon
-           | Plus
-           | Minus
-           | Multiply
-           | ShiftLeft
-           | ShiftRight
-           | ShiftRightArithmetic
-           | LessThan
-           | GreaterThan
-           | Equal
-           | BinaryAnd
-           | BinaryOr
-           | BinaryXor
-           | Assignment
-           | AssignmentOr
-           | AssignmentAnd
-           | AssignmentPlus
-           | AssignmentMinus
-           | AssignmentMultiply
-           | LParen
-           | RParen
-           | Identifier String
-           | Int Int
-           | HexInt Int
+data Token = TokenIn
+           | TokenAnd
+           | TokenOr
+           | TokenQuestionMark
+           | TokenColon
+           | TokenPlus
+           | TokenMinus
+           | TokenMultiply
+           | TokenShiftLeft
+           | TokenShiftRight
+           | TokenShiftRightArithmetic
+           | TokenLessThan
+           | TokenGreaterThan
+           | TokenEqual
+           | TokenBinaryAnd
+           | TokenBinaryOr
+           | TokenBinaryXor
+           | TokenAssignment
+           | TokenAssignmentOr
+           | TokenAssignmentAnd
+           | TokenAssignmentPlus
+           | TokenAssignmentMinus
+           | TokenAssignmentMultiply
+           | TokenLParen
+           | TokenRParen
+           | TokenIdentifier String
+           | TokenInt Int
+           | TokenHexInt Int
            deriving (Eq, Show)
 
 tokenize = alexScanTokens

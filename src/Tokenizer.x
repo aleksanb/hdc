@@ -1,5 +1,5 @@
 {
-module Tokenizer (main) where
+module Tokenizer (Token(..), tokenize) where
 }
 
 %wrapper "basic"
@@ -20,8 +20,4 @@ tokens :-
 data Token = In
            deriving (Eq, Show)
 
-main = do
-  s <- getContents
-  print (alexScanTokens s)
-
-}
+tokenize = alexScanTokens

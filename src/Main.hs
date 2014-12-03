@@ -8,6 +8,6 @@ runEvalWith parser input = do
 main :: IO ()
 main = do
   putStrLn "Input"
-  runEvalWith Parser.parse "a = 20"
-  --input <- getContents
+  runEvalWith Parser.parse "a = a"
+  --input <- getLine
   --runEvalWith Parser.parse input

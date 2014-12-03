@@ -7,7 +7,10 @@ runEvalWith parser input = do
 
 main :: IO ()
 main = do
-  putStrLn "Input"
-  runEvalWith Parser.parse "a = a"
+  putStrLn "HDC: Haskell Demolicous Compiler\n"
+
+  program <- getContents
+  runEvalWith Parser.parse program
+
   --input <- getLine
   --runEvalWith Parser.parse input

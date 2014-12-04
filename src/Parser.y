@@ -112,7 +112,7 @@ immediate : int { DecimalInt $1 }
 {
 
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError s = error ("Parse error" ++ show s)
 
 parse :: String -> Program
 parse = parser . tokenize

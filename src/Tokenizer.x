@@ -75,6 +75,7 @@ data Token = TokenIn
            | TokenHexInt Int
            deriving (Eq, Show)
 
+tokenize :: String -> [Token]
 tokenize = alexScanTokens
 
 }

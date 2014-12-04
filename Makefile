@@ -6,3 +6,6 @@ build: configure
 
 clean:
 	cabal clean
+
+test:
+	./dist/build/hdc/hdc < source_programs/tesla.d

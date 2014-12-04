@@ -42,7 +42,7 @@ tokens :-
   \(                { \s -> TokenLParen }
   \)                { \s -> TokenRParen }
   \[                { \s -> TokenLBracket }
-  \}                { \s -> TokenRBracket }
+  \]                { \s -> TokenRBracket }
   ","               { \s -> TokenComma }
 
   "load!"           { \s -> TokenLoad }

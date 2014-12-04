@@ -72,22 +72,22 @@ assignment_operator : "="    { AssignmentStraightUp }
 lefthand : variable { LefthandVariable $1 }
          | register { LefthandRegister $1 }
 
-expression : expression and expression   { And $1 $3 }
-           | expression or expression    { Or $1 $3 }
-           | expression in "[" list "]"  { IsInList $1 $4 }
-           | expression "&" expression   { BinaryAnd $1 $3 }
-           | expression "|" expression   { BinaryOr $1 $3 }
-           | expression "^" expression   { BinaryXor $1 $3 }
-           | expression "+" expression   { Plus $1 $3 }
-           | expression "-" expression   { Minus $1 $3 }
-           | expression "*" expression   { Multiply $1 $3 }
-           | expression "<" expression   { LessThan $1 $3 }
-           | expression ">" expression   { GreaterThan $1 $3 }
-           | expression "==" expression  { EqualTo $1 $3 }
-           | expression "<<" expression  { ShiftLeft $1 $3 }
-           | expression ">>" expression  { ShiftRightArithmetic $1 $3 }
-           | expression ">>>" expression { ShiftRight $1 $3 }
+expression : expression and expression   { BinaryExpression And $1 $3 }
+           | expression or expression    { BinaryExpression Or $1 $3 }
+           | expression "&" expression   { BinaryExpression BitwiseAnd $1 $3 }
+           | expression "|" expression   { BinaryExpression BitwiseOr $1 $3 }
+           | expression "^" expression   { BinaryExpression BitwiseXor $1 $3 }
+           | expression "+" expression   { BinaryExpression Plus $1 $3 }
+           | expression "-" expression   { BinaryExpression Minus $1 $3 }
+           | expression "*" expression   { BinaryExpression Multiply $1 $3 }
+           | expression "<" expression   { BinaryExpression LessThan $1 $3 }
+           | expression ">" expression   { BinaryExpression GreaterThan $1 $3 }
+           | expression "==" expression  { BinaryExpression EqualTo $1 $3 }
+           | expression "<<" expression  { BinaryExpression ShiftLeft $1 $3 }
+           | expression ">>" expression  { BinaryExpression ShiftRightArithmetic $1 $3 }
+           | expression ">>>" expression { BinaryExpression ShiftRight $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
+           | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { EnclosedExpression $2 }
            | lefthand                    { ExpressionIdentifier $1 }
            | immediate                   { ExpressionImmediate $1 }

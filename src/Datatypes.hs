@@ -22,26 +22,29 @@ data AssignmentOperator = AssignmentStraightUp
                         | AssignmentMultiply
                         deriving (Eq, Show)
 
-data Expression = And Expression Expression
-                | Or Expression Expression
-                | BinaryAnd Expression Expression
-                | BinaryOr Expression Expression
-                | BinaryXor Expression Expression
-                | IsInList Expression [ListItem]
-                | Plus Expression Expression
-                | Minus Expression Expression
-                | Multiply Expression Expression
-                | LessThan Expression Expression
-                | GreaterThan Expression Expression
-                | EqualTo Expression Expression
-                | ShiftLeft Expression Expression
-                | ShiftRight Expression Expression
-                | ShiftRightArithmetic Expression Expression
+data Expression = BinaryExpression BinaryOp Expression Expression
                 | TernaryExpression Expression Expression Expression
+                | IsInList Expression [ListItem]
                 | EnclosedExpression Expression
                 | ExpressionIdentifier Lefthand
                 | ExpressionImmediate Number
                 deriving (Eq, Show)
+
+data BinaryOp = And
+              | Or
+              | BitwiseAnd
+              | BitwiseOr
+              | BitwiseXor
+              | Plus
+              | Minus
+              | Multiply
+              | LessThan
+              | GreaterThan
+              | EqualTo
+              | ShiftLeft
+              | ShiftRight
+              | ShiftRightArithmetic
+              deriving (Eq, Show)
 
 data ListItem = ItemLefthand Lefthand
               | ItemConstant Number

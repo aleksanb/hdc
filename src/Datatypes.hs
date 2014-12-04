@@ -15,11 +15,7 @@ data Assignment = Assignment Lefthand AssignmentOperator Expression
                 deriving (Eq, Show)
 
 data AssignmentOperator = AssignmentStraightUp
-                        | AssignmentOr
-                        | AssignmentAnd
-                        | AssignmentPlus
-                        | AssignmentMinus
-                        | AssignmentMultiply
+                        | AssignmentBinaryOp BinaryOp
                         deriving (Eq, Show)
 
 data Expression = BinaryExpression BinaryOp Expression Expression

@@ -63,11 +63,11 @@ builtin : load_statement { LoadStatement }
 assignment : lefthand assignment_operator expression { Assignment $1 $2 $3 }
 
 assignment_operator : "="    { AssignmentStraightUp }
-                    | "|="   { AssignmentOr }
-                    | "&="   { AssignmentAnd }
-                    | "+="   { AssignmentPlus }
-                    | "-="   { AssignmentMinus }
-                    | "*="   { AssignmentMultiply }
+                    | "|="   { AssignmentBinaryOp BitwiseOr }
+                    | "&="   { AssignmentBinaryOp BitwiseAnd }
+                    | "+="   { AssignmentBinaryOp Plus }
+                    | "-="   { AssignmentBinaryOp Minus }
+                    | "*="   { AssignmentBinaryOp Multiply }
 
 lefthand : variable { LefthandVariable $1 }
          | register { LefthandRegister $1 }

@@ -1,8 +1,9 @@
 import qualified Parser
+import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do
-  let ast = Parser.parse input
-  putStrLn $ "Ast: " ++ (show ast)
+  let syntax_tree = Parser.parse input
+  putStrLn $ "Syntax tree:\n" ++ (Pr.ppShow syntax_tree)
 
 main :: IO ()
 main = do

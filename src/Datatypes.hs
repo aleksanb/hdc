@@ -25,7 +25,6 @@ data AssignmentOperator = AssignmentStraightUp
 data Expression = BinaryExpression BinaryOp Expression Expression
                 | TernaryExpression Expression Expression Expression
                 | IsInList Expression [ListItem]
-                | EnclosedExpression Expression
                 | ExpressionIdentifier Lefthand
                 | ExpressionImmediate Number
                 deriving (Eq, Show)

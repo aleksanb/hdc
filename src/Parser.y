@@ -88,7 +88,7 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression ">>>" expression { BinaryExpression ShiftRight $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
            | expression in "[" list "]"  { IsInList $1 $4 }
-           | "(" expression ")"          { EnclosedExpression $2 }
+           | "(" expression ")"          { $2 }
            | lefthand                    { ExpressionIdentifier $1 }
            | immediate                   { ExpressionImmediate $1 }
 

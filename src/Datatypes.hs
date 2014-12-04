@@ -8,7 +8,12 @@ data StatementList = StatementList StatementList Statement
                    deriving (Eq, Show)
 
 data Statement = AssignmentStatement Assignment
+               | BuiltinStatement Builtin
                deriving (Eq, Show)
+
+data Builtin = LoadStatement
+             | StoreStatement
+             deriving (Eq, Show)
 
 data Assignment = Assignment Lefthand AssignmentOperator Expression
                 deriving (Eq, Show)

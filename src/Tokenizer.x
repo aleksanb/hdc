@@ -45,6 +45,8 @@ tokens :-
   \}                { \s -> TokenRBracket }
   ","               { \s -> TokenComma }
 
+  "load!"           { \s -> TokenLoad }
+  "store!"          { \s -> TokenStore }
   $character+       { \s -> TokenIdentifier s }
 
 {
@@ -81,6 +83,8 @@ data Token = TokenIn
            | TokenIdentifier String
            | TokenInt Int
            | TokenHexInt Int
+           | TokenLoad
+           | TokenStore
            deriving (Eq, Show)
 
 tokenize :: String -> [Token]

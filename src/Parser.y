@@ -43,6 +43,8 @@ import Datatypes
   "["               { TokenLBracket }
   "]"               { TokenRBracket }
   ","               { TokenComma }
+  load_statement    { TokenLoad }
+  store_statement   { TokenStore }
   identifier        { TokenIdentifier $$ }
 
 %%
@@ -53,6 +55,10 @@ statement_list : statement_list statement { StatementList $1 $2 }
                | statement { StatementListItem $1 }
 
 statement : assignment { AssignmentStatement $1 }
+          | builtin { BuiltinStatement $1 }
+
+builtin : load_statement { LoadStatement }
+        | store_statement { StoreStatement }
 
 assignment : lefthand assignment_operator expression { Assignment $1 $2 $3 }
 

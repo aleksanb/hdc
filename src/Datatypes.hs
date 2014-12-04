@@ -1,11 +1,7 @@
 module Datatypes where
 
-data Program = Program StatementList
+data Program = Program [Statement]
              deriving (Eq, Show)
-
-data StatementList = StatementList StatementList Statement
-                   | StatementListItem Statement
-                   deriving (Eq, Show)
 
 data Statement = AssignmentStatement Assignment
                | BuiltinStatement Builtin

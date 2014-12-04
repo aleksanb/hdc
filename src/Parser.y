@@ -51,8 +51,8 @@ import Datatypes
 
 program : statement_list { Program $1 }
 
-statement_list : statement_list statement { StatementList $1 $2 }
-               | statement { StatementListItem $1 }
+statement_list : statement_list statement { $2 : $1 }
+               | statement { [$1] }
 
 statement : assignment { AssignmentStatement $1 }
           | builtin { BuiltinStatement $1 }

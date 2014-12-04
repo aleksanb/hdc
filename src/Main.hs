@@ -1,9 +1,13 @@
 import qualified Parser
+import qualified Beautifier
 import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do
   let syntax_tree = Parser.parse input
   putStrLn $ "Syntax tree:\n" ++ (Pr.ppShow syntax_tree)
+
+  let ast = Beautifier.beautify syntax_tree
+  putStrLn $ "Ast:\n" ++ (Pr.ppShow ast)
 
 main :: IO ()
 main = do

@@ -8,4 +8,4 @@ clean:
 	cabal clean
 
 test:
-	./dist/build/hdc/hdc < source_programs/tesla.d
+	./test_runner.sh

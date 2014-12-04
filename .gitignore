@@ -12,3 +12,4 @@ cabal.config
 *.swp
 Tokenizer.hs
 Parser.hs
+test_output

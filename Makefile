@@ -1,4 +1,8 @@
-all:
-	alex src/Tokenizer.x
-	happy src/Parser.y
-	(cd src && ghci Main.hs)
+configure:
+	cabal configure
+
+build: configure
+	cabal build
+
+clean:
+	cabal clean

@@ -40,6 +40,9 @@ tokens :-
   "*="              { \s -> TokenAssignmentMultiply }
   \(                { \s -> TokenLParen }
   \)                { \s -> TokenRParen }
+  \[                { \s -> TokenLBracket }
+  \}                { \s -> TokenRBracket }
+  ","               { \s -> TokenComma }
 
   $character+       { \s -> TokenIdentifier s }
 
@@ -70,6 +73,9 @@ data Token = TokenIn
            | TokenAssignmentMultiply
            | TokenLParen
            | TokenRParen
+           | TokenLBracket
+           | TokenRBracket
+           | TokenComma
            | TokenIdentifier String
            | TokenInt Int
            | TokenHexInt Int

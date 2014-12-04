@@ -6,7 +6,7 @@ module Tokenizer (Token(..), tokenize) where
 
 $digit = 0-9
 $hexdigit = [0-9a-fA-F]
-$character = [a-zA-Z]
+$character = [a-zA-Z_]
 $eol = [\n]
 
 tokens :-

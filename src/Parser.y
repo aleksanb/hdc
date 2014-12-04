@@ -37,6 +37,7 @@ import Datatypes
   "+="              { TokenAssignmentPlus }
   "-="              { TokenAssignmentMinus }
   "*="              { TokenAssignmentMultiply }
+  "$"               { TokenDollar }
   "("               { TokenLParen }
   ")"               { TokenRParen }
   "["               { TokenLBracket }
@@ -62,7 +63,8 @@ assignment_operator : "="    { AssignmentStraightUp }
                     | "-="   { AssignmentMinus }
                     | "*="   { AssignmentMultiply }
 
-lefthand : variable { Lefthand $1 }
+lefthand : variable { LefthandVariable $1 }
+         | register { LefthandRegister $1 }
 
 expression : expression and expression   { And $1 $3 }
            | expression or expression    { Or $1 $3 }
@@ -81,7 +83,7 @@ expression : expression and expression   { And $1 $3 }
            | expression ">>>" expression { ShiftRight $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
            | "(" expression ")"          { EnclosedExpression $2 }
-           | variable                    { ExpressionIdentifier $1 }
+           | lefthand                    { ExpressionIdentifier $1 }
            | immediate                   { ExpressionImmediate $1 }
 
 list : "[" element_list "]" { List $2 }
@@ -93,7 +95,9 @@ list_item : lefthand { ItemLefthand $1 }
           | constant { ItemConstant $1 }
           | immediate { ItemImmediate $1 }
 
-variable : identifier { Identifier $1 }
+variable : identifier { Variable $1 }
+
+register : "$" identifier { Register $2 }
 
 constant : int { DecimalInt $1 }
 

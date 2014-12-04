@@ -38,14 +38,21 @@ data Expression = And Expression Expression
                 | ShiftRightArithmetic Expression Expression
                 | TernaryExpression Expression Expression Expression
                 | EnclosedExpression Expression
-                | ExpressionIdentifier Identifier
+                | ExpressionIdentifier Lefthand
                 | ExpressionImmediate Number
                 deriving (Eq, Show)
 
 data Identifier = Identifier String
                 deriving (Eq, Show)
 
-data Lefthand = Lefthand Identifier
+data Lefthand = LefthandVariable Variable
+              | LefthandRegister Register
+              deriving (Eq, Show)
+
+data Variable = Variable String
+              deriving (Eq, Show)
+
+data Register = Register String
               deriving (Eq, Show)
 
 data List = List ElementList

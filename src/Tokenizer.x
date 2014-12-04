@@ -38,6 +38,7 @@ tokens :-
   "+="              { \s -> TokenAssignmentPlus }
   "-="              { \s -> TokenAssignmentMinus }
   "*="              { \s -> TokenAssignmentMultiply }
+  "$"               { \s -> TokenDollar }
   \(                { \s -> TokenLParen }
   \)                { \s -> TokenRParen }
   \[                { \s -> TokenLBracket }
@@ -71,6 +72,7 @@ data Token = TokenIn
            | TokenAssignmentPlus
            | TokenAssignmentMinus
            | TokenAssignmentMultiply
+           | TokenDollar
            | TokenLParen
            | TokenRParen
            | TokenLBracket

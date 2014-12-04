@@ -6,6 +6,7 @@ beautify :: Program -> Program
 beautify (Program statements) =
   Program (map beautifyStatement statements)
 
+
 beautifyStatement :: Statement -> Statement
 beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator expression)) =
   case assignmentOperator of
@@ -25,5 +26,6 @@ beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator e
             binaryOperation
             (ExpressionIdentifier lefthand)
             expression))
+
 
 beautifyStatement statement = statement

@@ -27,7 +27,7 @@ data Expression = And Expression Expression
                 | BinaryAnd Expression Expression
                 | BinaryOr Expression Expression
                 | BinaryXor Expression Expression
-                | IsInList Expression List
+                | IsInList Expression [ListItem]
                 | Plus Expression Expression
                 | Minus Expression Expression
                 | Multiply Expression Expression
@@ -43,6 +43,11 @@ data Expression = And Expression Expression
                 | ExpressionImmediate Number
                 deriving (Eq, Show)
 
+data ListItem = ItemLefthand Lefthand
+              | ItemConstant Number
+              | ItemImmediate Number
+              deriving (Eq, Show)
+
 data Identifier = Identifier String
                 deriving (Eq, Show)
 
@@ -54,18 +59,6 @@ data Variable = Variable String
               deriving (Eq, Show)
 
 data Register = Register String
-              deriving (Eq, Show)
-
-data List = List ElementList
-          deriving (Eq, Show)
-
-data ElementList = ElementList ElementList ListItem
-                 | ElementListItem ListItem
-                 deriving (Eq, Show)
-
-data ListItem = ItemLefthand Lefthand
-              | ItemConstant Number
-              | ItemImmediate Number
               deriving (Eq, Show)
 
 data Number = DecimalInt Int

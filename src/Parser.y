@@ -74,7 +74,7 @@ lefthand : variable { LefthandVariable $1 }
 
 expression : expression and expression   { And $1 $3 }
            | expression or expression    { Or $1 $3 }
-           | expression in list          { IsInList $1 $3 }
+           | expression in "[" list "]"  { IsInList $1 $4 }
            | expression "&" expression   { BinaryAnd $1 $3 }
            | expression "|" expression   { BinaryOr $1 $3 }
            | expression "^" expression   { BinaryXor $1 $3 }
@@ -92,10 +92,9 @@ expression : expression and expression   { And $1 $3 }
            | lefthand                    { ExpressionIdentifier $1 }
            | immediate                   { ExpressionImmediate $1 }
 
-list : "[" element_list "]" { List $2 }
 
-element_list : element_list "," list_item { ElementList $1 $3 }
-             | list_item { ElementListItem $1 }
+list : list "," list_item { $3 : $1 }
+     | list_item { [$1] }
 
 list_item : lefthand { ItemLefthand $1 }
           | constant { ItemConstant $1 }

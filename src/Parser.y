@@ -60,8 +60,8 @@ statement : assignment { AssignmentStatement $1 }
 builtin : load_statement { LoadStatement }
         | store_statement { StoreStatement }
 
-assignment : variable assignment_operator expression { Assignment (LefthandVariable $1) $2 $3 }
-           | register assignment_operator expression { Assignment (LefthandRegister $1) $2 $3 }
+assignment : variable assignment_operator expression { Assignment $1 $2 $3 }
+           | register assignment_operator expression { Assignment $1 $2 $3 }
 
 assignment_operator : "="    { AssignmentStraightUp }
                     | "|="   { AssignmentBinaryOp BitwiseOr }
@@ -87,17 +87,17 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
            | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { $2 }
-           | variable                    { ExpressionVariable $1 }
-           | register                    { ExpressionRegister $1 }
-           | immediate                   { ExpressionImmediate $1 }
+           | variable                    { ExpressionItem $1 }
+           | register                    { ExpressionItem $1 }
+           | immediate                   { ExpressionItem $1 }
 
 
 list : list "," list_item { $3 : $1 }
      | list_item { [$1] }
 
-list_item : variable { ItemVariable $1 }
-          | register { ItemRegister $1 }
-          | immediate { ItemImmediate $1 }
+list_item : variable { $1 }
+          | register { $1 }
+          | immediate { $1 }
 
 variable : identifier { Variable $1 }
 

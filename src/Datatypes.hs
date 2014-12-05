@@ -11,12 +11,8 @@ data Builtin = LoadStatement
              | StoreStatement
              deriving (Eq, Show)
 
-data Assignment = Assignment Lefthand AssignmentOperator Expression
+data Assignment = Assignment Item AssignmentOperator Expression
                 deriving (Eq, Show)
-
-data Lefthand = LefthandVariable Variable
-              | LefthandRegister Register
-              deriving (Eq, Show)
 
 data AssignmentOperator = AssignmentStraightUp
                         | AssignmentBinaryOp BinaryOp
@@ -24,10 +20,8 @@ data AssignmentOperator = AssignmentStraightUp
 
 data Expression = BinaryExpression BinaryOp Expression Expression
                 | TernaryExpression Expression Expression Expression
-                | IsInList Expression [ListItem]
-                | ExpressionVariable Variable
-                | ExpressionRegister Register
-                | ExpressionImmediate Number
+                | IsInList Expression [Item]
+                | ExpressionItem Item
                 deriving (Eq, Show)
 
 data BinaryOp = And
@@ -46,17 +40,8 @@ data BinaryOp = And
               | ShiftRightArithmetic
               deriving (Eq, Show)
 
-data ListItem = ItemVariable Variable
-              | ItemRegister Register
-              | ItemImmediate Number
-              deriving (Eq, Show)
-
-data Variable = Variable String
-              deriving (Eq, Show)
-
-data Register = Register String
-              deriving (Eq, Show)
-
-data Number = DecimalInt Int
-            | HexInt Int
-            deriving (Eq, Show)
+data Item = Variable String
+          | Register String
+          | DecimalInt Int
+          | HexInt Int
+          deriving (Eq, Show)

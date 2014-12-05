@@ -40,11 +40,11 @@ beautifyExpression (IsInList expression [item]) =
 beautifyExpression (IsInList expression (item:items)) =
   BinaryExpression
     Or
+    (beautifyExpression (IsInList expression items))
     (BinaryExpression
       EqualTo
       expression
       (ExpressionItem item))
-    (beautifyExpression (IsInList expression items))
 
 
 beautifyExpression others = others

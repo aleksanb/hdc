@@ -47,6 +47,18 @@ import Datatypes
   store_statement   { TokenStore }
   identifier        { TokenIdentifier $$ }
 
+%right in
+%left or
+%left and
+%left "|"
+%left "^"
+%left "&"
+%left "=="
+%left "<" ">"
+%left "<<" ">>" ">>>"
+%left "+" "-"
+%left "*"
+
 %%
 
 program : statement_list { Program $1 }

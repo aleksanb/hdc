@@ -24,8 +24,5 @@ beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator e
           AssignmentStraightUp
           (BinaryExpression
             binaryOperation
-            (ExpressionIdentifier lefthand)
+            (ExpressionItem lefthand)
             expression))
-
-
-beautifyStatement statement = statement

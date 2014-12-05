@@ -48,9 +48,9 @@ import Datatypes
   identifier        { TokenIdentifier $$ }
 
 %right "?" ":"
-%right in
 %left or
 %left and
+%left in
 %left "|"
 %left "^"
 %left "&"

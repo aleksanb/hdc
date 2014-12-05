@@ -47,6 +47,7 @@ import Datatypes
   store_statement   { TokenStore }
   identifier        { TokenIdentifier $$ }
 
+%right "?" ":"
 %right in
 %left or
 %left and

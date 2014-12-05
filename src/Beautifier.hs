@@ -46,5 +46,17 @@ beautifyExpression (IsInList expression (item:items)) =
       expression
       (ExpressionItem item))
 
+-- Ensure recursion over nested expressions
+beautifyExpression (BinaryExpression op e1 e2) =
+  BinaryExpression
+    op
+    (beautifyExpression e1)
+    (beautifyExpression e2)
+
+beautifyExpression (TernaryExpression e1 e2 e3) =
+  TernaryExpression
+    (beautifyExpression e1)
+    (beautifyExpression e2)
+    (beautifyExpression e3)
 
 beautifyExpression others = others

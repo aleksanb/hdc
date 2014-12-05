@@ -98,7 +98,7 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression ">>" expression  { BinaryExpression ShiftRightArithmetic $1 $3 }
            | expression ">>>" expression { BinaryExpression ShiftRight $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
-           | expression in "[" list "]"  { IsInList $1 (reverse $4) }
+           | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { $2 }
            | variable                    { ExpressionItem $1 }
            | register                    { ExpressionItem $1 }

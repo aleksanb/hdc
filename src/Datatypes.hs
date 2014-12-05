@@ -42,6 +42,7 @@ data BinaryOp = And
 
 data Item = Variable String
           | Register String
+          | Constant Int
           | DecimalInt Int
           | HexInt Int
           deriving (Eq, Show)

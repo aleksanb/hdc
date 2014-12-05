@@ -8,15 +8,11 @@ beautify (Program statements) =
 
 
 beautifyStatement :: Statement -> Statement
-beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator oldExpression)) =
+beautifyStatement statement@(AssignmentStatement (Assignment lefthand assignmentOperator oldExpression)) =
   let expression = beautifyExpression oldExpression in
   case assignmentOperator of
     AssignmentStraightUp ->
-      AssignmentStatement
-        (Assignment
-          lefthand
-          assignmentOperator
-          expression)
+      statement
 
     AssignmentBinaryOp binaryOperation -> -- Handle all other operators
       AssignmentStatement

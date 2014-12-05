@@ -6,11 +6,13 @@ other_edge_offset = 64 - edge_offset
 
 $mask |=
   x in [edge_offset, other_edge_offset]
-  and edge_offset < y < other_edge_offset
+  and edge_offset < y
+  and y < other_edge_offset
 
 $mask |=
   y in [edge_offset, other_edge_offset]
-  and edge_offset < x < other_edge_offset
+  and edge_offset < x
+  and x < other_edge_offset
 
 $mask |=
   x in [y, -y]

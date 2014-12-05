@@ -28,23 +28,25 @@ beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator o
             (ExpressionItem lefthand)
             expression))
 
+beautifyStatement other = other
+
 
 beautifyExpression :: Expression -> Expression
-beautifyExpression (IsInList expression [item]) =
+beautifyExpression (IsInList lefthand [expression]) =
   (BinaryExpression
     EqualTo
-    expression
-    (ExpressionItem item))
+    lefthand
+    expression)
 
 
-beautifyExpression (IsInList expression (item:items)) =
+beautifyExpression (IsInList lefthand (expression:expressions)) =
   BinaryExpression
     Or
-    (beautifyExpression (IsInList expression items))
+    (beautifyExpression (IsInList lefthand expressions))
     (BinaryExpression
       EqualTo
-      expression
-      (ExpressionItem item))
+      lefthand
+      expression)
 
 -- Ensure recursion over nested expressions
 beautifyExpression (BinaryExpression op e1 e2) =

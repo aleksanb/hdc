@@ -103,16 +103,16 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | "-" expression %prec UMINUS { BinaryExpression Minus (ExpressionItem (DecimalInt 0)) $2 }
            | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { $2 }
-           | list_item                   { ExpressionItem $1 }
+           | items                       { ExpressionItem $1 }
 
 
-list : list "," list_item { $3 : $1 }
-     | list_item { [$1] }
+list : list "," expression { $3 : $1 }
+     | expression { [$1] }
 
-list_item : variable  { $1 }
-          | register  { $1 }
-          | immediate { $1 }
-          | constant  { $1 }
+items : variable  { $1 }
+      | register  { $1 }
+      | immediate { $1 }
+      | constant  { $1 }
 
 variable : identifier { Variable $1 }
 

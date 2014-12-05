@@ -20,7 +20,7 @@ data AssignmentOperator = AssignmentStraightUp
 
 data Expression = BinaryExpression BinaryOp Expression Expression
                 | TernaryExpression Expression Expression Expression
-                | IsInList Expression [Item]
+                | IsInList Expression [Expression]
                 | ExpressionItem Item
                 deriving (Eq, Show)
 

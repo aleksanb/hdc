@@ -4,20 +4,20 @@
 name:                hdc
 version:             0.1.0.0
 synopsis:            Haskell Demolicious Compiler
--- description:         
+-- description:
 homepage:            https://github.com/aleksanb/hdc
 license:             MIT
 license-file:        LICENSE
 author:              hdc authors
 maintainer:          aleksander@burkow.no
--- copyright:           
+-- copyright:
 category:            Compiler
 build-type:          Simple
 cabal-version:       >=1.8
 
 executable hdc
   main-is:             Main.hs
-  -- other-modules:       
-  build-depends:       base ==4.*, array ==0.*, pretty-show
+  -- other-modules:
+  build-depends:       base ==4.*, array ==0.*, pretty-show, ghc
   hs-source-dirs:      src
   build-tools:         alex, happy

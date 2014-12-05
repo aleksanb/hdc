@@ -60,7 +60,8 @@ statement : assignment { AssignmentStatement $1 }
 builtin : load_statement { LoadStatement }
         | store_statement { StoreStatement }
 
-assignment : lefthand assignment_operator expression { Assignment $1 $2 $3 }
+assignment : variable assignment_operator expression { Assignment (LefthandVariable $1) $2 $3 }
+           | register assignment_operator expression { Assignment (LefthandRegister $1) $2 $3 }
 
 assignment_operator : "="    { AssignmentStraightUp }
                     | "|="   { AssignmentBinaryOp BitwiseOr }
@@ -68,9 +69,6 @@ assignment_operator : "="    { AssignmentStraightUp }
                     | "+="   { AssignmentBinaryOp Plus }
                     | "-="   { AssignmentBinaryOp Minus }
                     | "*="   { AssignmentBinaryOp Multiply }
-
-lefthand : variable { LefthandVariable $1 }
-         | register { LefthandRegister $1 }
 
 expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression or expression    { BinaryExpression Or $1 $3 }
@@ -89,22 +87,21 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
            | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { $2 }
-           | lefthand                    { ExpressionIdentifier $1 }
+           | variable                    { ExpressionVariable $1 }
+           | register                    { ExpressionRegister $1 }
            | immediate                   { ExpressionImmediate $1 }
 
 
 list : list "," list_item { $3 : $1 }
      | list_item { [$1] }
 
-list_item : lefthand { ItemLefthand $1 }
-          | constant { ItemConstant $1 }
+list_item : variable { ItemVariable $1 }
+          | register { ItemRegister $1 }
           | immediate { ItemImmediate $1 }
 
 variable : identifier { Variable $1 }
 
 register : "$" identifier { Register $2 }
-
-constant : int { DecimalInt $1 }
 
 immediate : int { DecimalInt $1 }
           | hexint { HexInt $1 }

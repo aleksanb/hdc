@@ -8,11 +8,14 @@ beautify (Program statements) =
 
 
 beautifyStatement :: Statement -> Statement
-beautifyStatement statement@(AssignmentStatement (Assignment lefthand assignmentOperator oldExpression)) =
-  let expression = beautifyExpression oldExpression in
+beautifyStatement (AssignmentStatement (Assignment lefthand assignmentOperator oldExpression)) =
   case assignmentOperator of
     AssignmentStraightUp ->
-      statement
+      AssignmentStatement
+        (Assignment
+          lefthand
+          assignmentOperator
+          expression)
 
     AssignmentBinaryOp binaryOperation -> -- Handle all other operators
       AssignmentStatement
@@ -23,6 +26,7 @@ beautifyStatement statement@(AssignmentStatement (Assignment lefthand assignment
             binaryOperation
             (ExpressionItem lefthand)
             expression))
+  where expression = beautifyExpression oldExpression
 
 beautifyStatement other = other
 
@@ -32,7 +36,7 @@ beautifyExpression (IsInList lefthand [expression]) =
   (BinaryExpression
     EqualTo
     lefthand
-    expression)
+    (beautifyExpression expression))
 
 
 beautifyExpression (IsInList lefthand (expression:expressions)) =
@@ -42,7 +46,7 @@ beautifyExpression (IsInList lefthand (expression:expressions)) =
     (BinaryExpression
       EqualTo
       lefthand
-      expression)
+      (beautifyExpression expression))
 
 -- Ensure recursion over nested expressions
 beautifyExpression (BinaryExpression op e1 e2) =

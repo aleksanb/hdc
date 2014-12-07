@@ -47,5 +47,9 @@ data Item = Variable String
           | HexInt Int
           deriving (Eq, Show)
 
-data IR = IR BinaryOp Int Int Int
+data IR = ThreeIR BinaryOp Int Int Int
+        | LoadImmediateIR Int Int
+        | LoadConstantIR Int Int
+        | LoadIR
+        | StoreIR
         deriving (Show)

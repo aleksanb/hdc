@@ -38,7 +38,7 @@ generateStatement cgs (AssignmentStatement (Assignment lefthand assignmentOperat
         Variable variable ->
           Map.insert variable targetRegister variables
 
-      assignment = generateIR Plus targetRegister 0 reg1 
+      assignment = ThreeIR Plus targetRegister 0 reg1 False
 
   in CGS rest newvariables (assignment : generatedCode)
 
@@ -53,8 +53,16 @@ generateExpression :: CodeGenState -> Expression -> (CodeGenState, Int)
 generateExpression cgs (BinaryExpression op e1 e2) =
   let (cgs1, reg1) = generateExpression cgs e1
       ((CGS (freeRegister:rest) variables generatedCode), reg2) = generateExpression cgs1 e2
-      assignment = generateIR op freeRegister reg1 reg2
+      assignment = ThreeIR op freeRegister reg1 reg2 False
   in (CGS rest variables (assignment : generatedCode), freeRegister)
+
+generateExpression cgs (TernaryExpression e1 e2 e3) =
+  let (cgs1, reg1) = generateExpression cgs e1
+      (cgs2, reg2) = generateExpression cgs e2
+      ((CGS (freeRegister:rest) variables generatedCode), reg3) = generateExpression cgs2 e3
+      firstExpression = ThreeIR Plus freeRegister 0 reg2 False
+      secondExpression = ThreeIR Plus freeRegister 0 reg2 True
+  in (CGS rest variables (secondExpression:firstExpression:generatedCode), freeRegister)
 
 generateExpression cgs@(CGS (freeRegister:registers) variables generatedCode) (ExpressionItem item) =
   case item of
@@ -63,11 +71,11 @@ generateExpression cgs@(CGS (freeRegister:registers) variables generatedCode) (E
     Register name ->
       (cgs, fromRegister name)
     DecimalInt decimalInt ->
-      (CGS registers variables (LoadImmediateIR freeRegister decimalInt:generatedCode), freeRegister )
+      (CGS registers variables (LoadImmediateIR freeRegister decimalInt False:generatedCode), freeRegister )
     HexInt hexInt ->
-      (CGS registers variables (LoadImmediateIR freeRegister hexInt:generatedCode), freeRegister)
+      (CGS registers variables (LoadImmediateIR freeRegister hexInt False:generatedCode), freeRegister)
     Constant constant ->
-      (CGS registers variables (LoadConstantIR freeRegister constant:generatedCode), freeRegister)
+      (CGS registers variables (LoadConstantIR freeRegister constant False:generatedCode), freeRegister)
 
 
 fromRegister :: String -> Int
@@ -75,9 +83,6 @@ fromRegister register =
   let mapping = Map.fromList [("zero", 0), ("id_high", 1), ("id_low", 2), ("address_high", 3), ("address_low", 4), ("data", 5), ("mask", 6)]
   in fromJust (Map.lookup register mapping)
 
-generateIR :: BinaryOp -> Int -> Int -> Int -> IR
-generateIR op lhs operand1 operand2 =
-  ThreeIR op lhs operand1 operand2
   -- Commented block here provides assembly output endpoint
   --let mapping = Map.fromList [(And, "and"), (Or, "or"), (BitwiseAnd, "and"), (BitwiseOr, "or"), (BitwiseXor, "xor"), (Plus, "add"), (Minus, "sub"), (Multiply, "mul"), (LessThan, "slt"), (EqualTo, "seq")]
   --in (fromJust (Map.lookup op mapping)) ++ " $" ++ show lhs ++ " $" ++ show operand1 ++ " $" ++ show operand2 ++ "\n"

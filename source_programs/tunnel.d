@@ -1,4 +1,4 @@
-x = $id_high & 63
+x = $id_low & 63
 y = $id_low >> 6
 
 edge_offset = $constants[10]

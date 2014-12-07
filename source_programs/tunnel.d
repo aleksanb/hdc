@@ -20,6 +20,6 @@ $mask |=
 $address_low = $id_low
 $address_high = $id_high
 
-#$data = $mask ? 0xffff : 0xeeee #`rgb(0, 0, 255)`
+$data = $mask ? 0xffff : 0xeeee #`rgb(0, 0, 255)`
 
 store!

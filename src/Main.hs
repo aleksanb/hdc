@@ -1,5 +1,6 @@
 import qualified Parser
 import qualified Beautifier
+import qualified Generator
 import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do
@@ -8,6 +9,9 @@ runEvalWith input = do
 
   let ast = Beautifier.beautify syntax_tree
   putStrLn $ "Ast:\n" ++ (Pr.ppShow ast)
+
+  let ir = Generator.generate ast
+  putStrLn $ "IR:\n" ++ (Pr.ppShow ir)
 
 main :: IO ()
 main = do

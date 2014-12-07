@@ -46,3 +46,6 @@ data Item = Variable String
           | DecimalInt Int
           | HexInt Int
           deriving (Eq, Show)
+
+data IR = IR BinaryOp Int Int Int
+        deriving (Show)

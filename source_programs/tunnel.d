@@ -17,7 +17,9 @@ $mask |=
 $mask |=
   x in [y, -y]
 
-$address = $id
-$data = $mask ? 0xffff : 0xeeee #`rgb(0, 0, 255)`
+$address_low = $id_low
+$address_high = $id_high
+
+#$data = $mask ? 0xffff : 0xeeee #`rgb(0, 0, 255)`
 
 store!

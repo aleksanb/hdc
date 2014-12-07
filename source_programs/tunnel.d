@@ -4,6 +4,8 @@ y = $id_low >> 6
 edge_offset = $constants[10]
 other_edge_offset = 64 - edge_offset
 
+$mask = 0
+
 $mask |=
   x in [edge_offset, other_edge_offset]
   and edge_offset < y

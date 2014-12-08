@@ -1,6 +1,6 @@
 import qualified Parser
 import qualified Beautifier
-import qualified Generator
+import qualified GeneratorM as Generator
 import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do

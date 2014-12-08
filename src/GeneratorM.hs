@@ -19,7 +19,7 @@ data CodeGenState =
 generate :: Program -> CodeGenState
 generate program =
   let cgs = CGS [7..100] Map.empty []
-      CGS r v c = snd $ runState (generateProgram program) cgs
+      CGS r v c = execState (generateProgram program) cgs
   in CGS r v $ reverse c
 
 
@@ -110,7 +110,7 @@ registerForItem (Variable variable) = do
   case Map.lookup variable variables of
     Just id ->
       return id
-    _ -> do
+    Nothing -> do
       put (CGS registers (Map.insert variable register variables) code)
       return register
 

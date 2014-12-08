@@ -29,23 +29,21 @@ generateProgram (Program statements) = do
   return 1
 
 
-generateStatement :: Statement -> State CodeGenState Int
+generateStatement :: Statement -> State CodeGenState ()
 generateStatement (AssignmentStatement (Assignment item _ e1)) = do
   reg1 <- generateExpression e1
   lefthand <- registerForItem item
 
-  emitAssignmentWithTarget Plus lefthand 0 reg1 False
+  emitInstruction $ ThreeIR Plus lefthand 0 reg1 False
 
 
 generateStatement (BuiltinStatement builtinStatement) = do
-  CGS registers variables generatedCode <- get
-  let statement =
+  let instruction =
         case builtinStatement of
           LoadStatement -> LoadIR
           storeStatement -> StoreIR
 
-  put (CGS registers variables (statement:generatedCode))
-  return 1
+  emitInstruction instruction
 
 
 generateExpression :: Expression -> State CodeGenState Int
@@ -63,9 +61,11 @@ generateExpression (TernaryExpression e1 e2 e3) = do
 
   targetReg <- getFreeRegister
 
-  emitAssignmentWithTarget Plus 6 0 reg1 False
-  emitAssignmentWithTarget Plus targetReg 0 reg2 False
-  emitAssignmentWithTarget Plus targetReg 0 reg3 True
+  emitInstruction $ ThreeIR Plus 6 0 reg1 False
+  emitInstruction $ ThreeIR Plus targetReg 0 reg2 False
+  emitInstruction $ ThreeIR Plus targetReg 0 reg3 True
+
+  return targetReg
 
 
 generateExpression (ExpressionItem item) = do
@@ -111,12 +111,10 @@ emitAssignment op reg1 reg2 masked = do
   return register
 
 
-emitAssignmentWithTarget :: BinaryOp -> Int -> Int -> Int -> Bool -> State CodeGenState Int
-emitAssignmentWithTarget op reg1 reg2 reg3 masked = do
+emitInstruction :: IR -> State CodeGenState ()
+emitInstruction instruction = do
   CGS registers variables generatedCode <- get
-  let instruction = ThreeIR op reg1 reg2 reg3 masked
   put (CGS registers variables (instruction:generatedCode))
-  return reg1
 
 
 emitImmediate :: Int -> Bool -> State CodeGenState Int

@@ -2,7 +2,15 @@
 configure:
 	cabal configure
 
-build: configure
+.PHONY:
+parser:
+	happy src/Parser.y
+
+.PHONY:
+tokenizer:
+	alex src/Tokenizer.x
+
+build: tokenizer parser configure
 	cabal build
 
 .PHONY:

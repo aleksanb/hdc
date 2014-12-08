@@ -10,7 +10,7 @@ serializeInstruction :: IR -> String
 serializeInstruction (LoadImmediateIR reg immediate masked) =
   "ldi $" ++ (show reg) ++ ", " ++ (show immediate)
 
-serializeInstruction (ThreeIR operator rs rt rd masked) =
+serializeInstruction (ThreeIR operator rd rs rt masked) =
   (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", $" ++ (show rt)
   where opcode = case operator of
                And -> Op.And

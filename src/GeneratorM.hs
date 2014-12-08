@@ -23,10 +23,10 @@ generate program =
   in CGS r v $ reverse c
 
 
-generateProgram :: Program -> State CodeGenState Int
+generateProgram :: Program -> State CodeGenState ()
 generateProgram (Program statements) = do
   mapM generateStatement statements
-  return 1
+  return ()
 
 
 generateStatement :: Statement -> State CodeGenState ()
@@ -51,7 +51,10 @@ generateExpression (BinaryExpression op e1 e2) = do
   reg1 <- generateExpression e1
   reg2 <- generateExpression e2
 
-  emitAssignment op reg1 reg2 False
+  targetReg <- getRegister
+  emitInstruction $ ThreeIR op targetReg reg1 reg2 False
+
+  return targetReg
 
 
 generateExpression (TernaryExpression e1 e2 e3) = do
@@ -59,8 +62,7 @@ generateExpression (TernaryExpression e1 e2 e3) = do
   reg2 <- generateExpression e2
   reg3 <- generateExpression e3
 
-  targetReg <- getFreeRegister
-
+  targetReg <- getRegister
   emitInstruction $ ThreeIR Plus 6 0 reg1 False
   emitInstruction $ ThreeIR Plus targetReg 0 reg2 False
   emitInstruction $ ThreeIR Plus targetReg 0 reg3 True
@@ -73,19 +75,29 @@ generateExpression (ExpressionItem item) = do
   case item of
     Variable name -> return (fromJust (Map.lookup name variables))
     Register name -> return $ fromRegister name
-    DecimalInt int -> emitImmediate int False
-    HexInt int -> emitImmediate int False
-    Constant constant -> emitConstant constant False
+    DecimalInt int -> do
+      reg <- getRegister
+      emitInstruction $ LoadImmediateIR reg int False
+      return reg
+
+    HexInt int -> do
+      reg <- getRegister
+      emitInstruction $ LoadImmediateIR reg int False
+      return reg
+
+    Constant constant -> do
+      reg <- getRegister
+      emitInstruction $ LoadConstantIR reg constant False
+      return reg
 
 -----------------------------------------------
 -- Move the functions below to separate file --
 -----------------------------------------------
 
-getFreeRegister :: State CodeGenState Int
-getFreeRegister = do
-  CGS (register:registers) variables generatedCode <- get
-  put (CGS registers variables generatedCode)
-  return register
+getRegister :: State CodeGenState Int
+getRegister = do
+  state popRegister
+  where popRegister (CGS (r:rs) v c) = (r, CGS rs v c)
 
 
 registerForItem :: Item -> State CodeGenState Int
@@ -103,34 +115,10 @@ registerForItem (Variable variable) = do
       return register
 
 
-emitAssignment :: BinaryOp -> Int -> Int -> Bool -> State CodeGenState Int
-emitAssignment op reg1 reg2 masked = do
-  CGS (register:registers) variables generatedCode <- get
-  let instruction = ThreeIR op register reg1 reg2 masked
-  put (CGS registers variables (instruction:generatedCode))
-  return register
-
-
 emitInstruction :: IR -> State CodeGenState ()
 emitInstruction instruction = do
-  CGS registers variables generatedCode <- get
-  put (CGS registers variables (instruction:generatedCode))
-
-
-emitImmediate :: Int -> Bool -> State CodeGenState Int
-emitImmediate immediate masked = do
-  CGS (register:registers) variables generatedCode <- get
-  let instruction = LoadImmediateIR register immediate masked
-  put (CGS registers variables (instruction:generatedCode))
-  return register
-
-
-emitConstant :: Int -> Bool -> State CodeGenState Int
-emitConstant constant masked = do
-  CGS (register:registers) variables generatedCode <- get
-  let instruction = LoadConstantIR register constant masked
-  put (CGS registers variables (instruction:generatedCode))
-  return register
+  state appendInstruction
+  where appendInstruction (CGS rs v is) = ((), CGS rs v (instruction:is))
 
 
 fromRegister :: String -> Int

@@ -61,7 +61,7 @@ generateExpression cgs (TernaryExpression e1 e2 e3) =
       (cgs2, reg2) = generateExpression cgs e2
       ((CGS (freeRegister:rest) variables generatedCode), reg3) = generateExpression cgs2 e3
       firstExpression = ThreeIR Plus freeRegister 0 reg2 False
-      secondExpression = ThreeIR Plus freeRegister 0 reg2 True
+      secondExpression = ThreeIR Plus freeRegister 0 reg3 True
   in (CGS rest variables (secondExpression:firstExpression:generatedCode), freeRegister)
 
 generateExpression cgs@(CGS (freeRegister:registers) variables generatedCode) (ExpressionItem item) =

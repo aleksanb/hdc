@@ -1,4 +1,4 @@
-module GeneratorM(generate) where
+module GeneratorM(generate, getGeneratedCode) where
 
 import Datatypes
 import Text.Printf
@@ -14,6 +14,8 @@ data CodeGenState =
     generatedCode :: [IR]
   }
   deriving (Show)
+
+getGeneratedCode = generatedCode
 
 
 generate :: Program -> CodeGenState

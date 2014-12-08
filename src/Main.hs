@@ -1,6 +1,7 @@
 import qualified Parser
 import qualified Beautifier
 import qualified GeneratorM as Generator
+import qualified Serializer
 import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do
@@ -12,6 +13,9 @@ runEvalWith input = do
 
   let ir = Generator.generate ast
   putStrLn $ "IR:\n" ++ (Pr.ppShow ir)
+
+  let assembly = Serializer.serialize (Generator.getGeneratedCode ir)
+  putStrLn $ "Assembly:\n" ++ (unlines assembly)
 
 main :: IO ()
 main = do

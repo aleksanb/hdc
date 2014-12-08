@@ -100,7 +100,7 @@ expression : expression and expression   { BinaryExpression And $1 $3 }
            | expression ">>" expression  { BinaryExpression ShiftRightArithmetic $1 $3 }
            | expression ">>>" expression { BinaryExpression ShiftRight $1 $3 }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
-           | "-" expression %prec UMINUS { BinaryExpression Minus (ExpressionItem (DecimalInt 0)) $2 }
+           | "-" expression %prec UMINUS { BinaryExpression Minus (ExpressionItem (Immediate 0)) $2 }
            | expression in "[" list "]"  { IsInList $1 $4 }
            | "(" expression ")"          { $2 }
            | items                       { ExpressionItem $1 }
@@ -120,8 +120,8 @@ register : "$" identifier { Register $2 }
 
 constant : "$" constants "[" int "]" { Constant $4 }
 
-immediate : int { DecimalInt $1 }
-          | hexint { HexInt $1 }
+immediate : int { Immediate $1 }
+          | hexint { Immediate $1 }
 
 {
 

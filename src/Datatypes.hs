@@ -43,8 +43,7 @@ data BinaryOp = And
 data Item = Variable String
           | Register String
           | Constant Int
-          | DecimalInt Int
-          | HexInt Int
+          | Immediate Int
           deriving (Eq, Show)
 
 data IR = ThreeIR BinaryOp Int Int Int Bool

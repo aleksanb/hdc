@@ -75,12 +75,7 @@ generateExpression (ExpressionItem item) = do
   case item of
     Variable name -> return (fromJust (Map.lookup name variables))
     Register name -> return $ fromRegister name
-    DecimalInt int -> do
-      reg <- getRegister
-      emitInstruction $ LoadImmediateIR reg int False
-      return reg
-
-    HexInt int -> do
+    Immediate int -> do
       reg <- getRegister
       emitInstruction $ LoadImmediateIR reg int False
       return reg

@@ -95,9 +95,9 @@ registerForItem (Register register) = do
 
 registerForItem (Variable variable) = do
   CGS (register:registers) variables code <- get
-  case Map.member variable variables of
-    True -> do
-      return (fromJust (Map.lookup variable variables))
+  case Map.lookup variable variables of
+    Just id ->
+      return id
     _ -> do
       put (CGS registers (Map.insert variable register variables) code)
       return register

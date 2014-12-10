@@ -2,6 +2,7 @@ import qualified Parser
 import qualified Beautifier
 import qualified GeneratorM as Generator
 import qualified Serializer
+import qualified Optimizer
 import qualified Text.Show.Pretty as Pr
 
 runEvalWith input = do
@@ -14,7 +15,10 @@ runEvalWith input = do
   let ir = Generator.generate ast
   putStrLn $ "IR:\n" ++ (Pr.ppShow ir)
 
-  let assembly = Serializer.serialize (Generator.getGeneratedCode ir)
+  let optimized = Optimizer.optimize (Generator.getGeneratedCode ir)
+  putStrLn $ "Optimized:\n" ++ (Pr.ppShow optimized)
+
+  let assembly = Serializer.serialize optimized
   putStrLn $ "Assembly:\n" ++ (unlines assembly)
 
 main :: IO ()

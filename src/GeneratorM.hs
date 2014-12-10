@@ -36,7 +36,7 @@ generateStatement (AssignmentStatement (Assignment item _ e1)) = do
   reg1 <- generateExpression e1
   lefthand <- registerForItem item
 
-  emitInstruction $ ThreeIR Plus lefthand 0 reg1 False
+  emitInstruction $ RRR Plus lefthand 0 reg1 False
 
 
 generateStatement (BuiltinStatement builtinStatement) = do
@@ -54,7 +54,7 @@ generateExpression (BinaryExpression op e1 e2) = do
   reg2 <- generateExpression e2
 
   targetReg <- getRegister
-  emitInstruction $ ThreeIR op targetReg reg1 reg2 False
+  emitInstruction $ RRR op targetReg reg1 reg2 False
 
   return targetReg
 
@@ -65,9 +65,9 @@ generateExpression (TernaryExpression e1 e2 e3) = do
   reg3 <- generateExpression e3
 
   targetReg <- getRegister
-  emitInstruction $ ThreeIR Plus 6 0 reg1 False
-  emitInstruction $ ThreeIR Plus targetReg 0 reg2 False
-  emitInstruction $ ThreeIR Plus targetReg 0 reg3 True
+  emitInstruction $ RRR Plus 6 0 reg1 False
+  emitInstruction $ RRR Plus targetReg 0 reg2 False
+  emitInstruction $ RRR Plus targetReg 0 reg3 True
 
   return targetReg
 

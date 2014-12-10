@@ -10,6 +10,7 @@ data Opcode = And
             | Mul
             | Slt
             | Seq
+            | Addi
             | Sll
             | Srl
             | Sra

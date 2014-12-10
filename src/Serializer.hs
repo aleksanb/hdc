@@ -10,7 +10,7 @@ serializeInstruction :: IR -> String
 serializeInstruction (LoadImmediateIR reg immediate masked) =
   "ldi $" ++ (show reg) ++ ", " ++ (show immediate)
 
-serializeInstruction (ThreeIR operator rd rs rt masked) =
+serializeInstruction (RRR operator rd rs rt masked) =
   (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", $" ++ (show rt)
   where opcode = case operator of
                And -> Op.And
@@ -23,6 +23,11 @@ serializeInstruction (ThreeIR operator rd rs rt masked) =
                Multiply -> Op.Mul
                LessThan -> Op.Slt
                EqualTo -> Op.Seq
+
+serializeInstruction (RRI operator rd rs sh masked) =
+  (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", " ++ (show sh)
+  where opcode = case operator of
+               Plus -> Op.Addi
                ShiftLeft -> Op.Sll
                ShiftRight -> Op.Srl
                ShiftRightArithmetic -> Op.Sra

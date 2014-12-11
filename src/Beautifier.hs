@@ -41,7 +41,7 @@ beautifyExpression (IsInList lefthand [expression]) =
 
 beautifyExpression (IsInList lefthand (expression:expressions)) =
   BinaryExpression
-    Or
+    BitwiseOr
     (beautifyExpression (IsInList lefthand expressions))
     (BinaryExpression
       EqualTo

@@ -19,8 +19,6 @@ serializeInstruction (ThreeIR operator rd (I rs) rt masked)
 serializeInstruction (ThreeIR operator (R rd) (R rs) (R rt) masked) =
   (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", $" ++ (show rt)
   where opcode = case operator of
-               And -> Op.And
-               Or -> Op.Or
                BitwiseAnd -> Op.And
                BitwiseOr -> Op.Or
                BitwiseXor -> Op.Xor

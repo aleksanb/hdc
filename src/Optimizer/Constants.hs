@@ -69,9 +69,7 @@ getFor other = do return other
 operatorFor :: BinaryOp -> Int -> Int -> Int
 operatorFor op =
   case op of
-    And -> (.&.)
     BitwiseAnd -> (.&.)
-    Or -> (.|.)
     BitwiseOr -> (.|.)
     BitwiseXor -> xor
     Plus -> (+)

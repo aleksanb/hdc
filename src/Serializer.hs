@@ -7,10 +7,16 @@ serialize instructions = (map serializeInstruction instructions)
 
 
 serializeInstruction :: IR -> String
-serializeInstruction (LoadImmediateIR reg immediate masked) =
+serializeInstruction (TwoIR (R reg) (I immediate)  masked) =
   "ldi $" ++ (show reg) ++ ", " ++ (show immediate)
 
-serializeInstruction (RRR operator rd rs rt masked) =
+serializeInstruction (TwoIR (R reg) (C address) masked) =
+  "ldc $" ++ (show reg) ++ ", " ++ (show address)
+
+serializeInstruction (ThreeIR operator rd (I rs) rt masked)
+  | rs == 1 = serializeInstruction $ ThreeIR operator rd (R 0) rt masked
+
+serializeInstruction (ThreeIR operator (R rd) (R rs) (R rt) masked) =
   (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", $" ++ (show rt)
   where opcode = case operator of
                And -> Op.And
@@ -24,7 +30,7 @@ serializeInstruction (RRR operator rd rs rt masked) =
                LessThan -> Op.Slt
                EqualTo -> Op.Seq
 
-serializeInstruction (RRI operator rd rs sh masked) =
+serializeInstruction (ThreeIR operator (R rd) (R rs) (I sh) masked) =
   (Op.mnemonic opcode) ++ " $" ++ (show rd) ++ ", $" ++ (show rs) ++ ", " ++ (show sh)
   where opcode = case operator of
                Plus -> Op.Addi
@@ -32,8 +38,6 @@ serializeInstruction (RRI operator rd rs sh masked) =
                ShiftRight -> Op.Srl
                ShiftRightArithmetic -> Op.Sra
 
-serializeInstruction (LoadConstantIR reg address masked) =
-  "ldc $" ++ (show reg) ++ ", " ++ (show address)
 
 serializeInstruction LoadIR = "lw"
 

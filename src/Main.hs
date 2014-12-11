@@ -15,7 +15,7 @@ runEvalWith input = do
   let ir = Generator.generate ast
   putStrLn $ "IR:\n" ++ (Pr.ppShow ir)
 
-  let optimized = Optimizer.optimize (Generator.getGeneratedCode ir)
+  let optimized = Optimizer.optimize $ Generator.getGeneratedCode ir
   putStrLn $ "Optimized:\n" ++ (Pr.ppShow optimized)
 
   let assembly = Serializer.serialize optimized

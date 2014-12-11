@@ -39,7 +39,7 @@ propagateConstant ir@(TwoIR (R r1) (I i1) m) = do
   return ir
 
 propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
-  let newImmediate = operandFor op i1 i2
+  let newImmediate = operatorFor op i1 i2
       newIR = TwoIR (R r1) (I newImmediate) m
 
   constants <- get
@@ -66,8 +66,8 @@ getFor (R reg) = do
 
 getFor other = do return other
 
-operandFor :: BinaryOp -> Int -> Int -> Int
-operandFor op =
+operatorFor :: BinaryOp -> Int -> Int -> Int
+operatorFor op =
   case op of
     And -> (.&.)
     BitwiseAnd -> (.&.)
@@ -80,6 +80,6 @@ operandFor op =
     ShiftLeft -> shiftL
     ShiftRight -> rotateR
     ShiftRightArithmetic -> shiftR
-    rqualTo -> \a b -> fromEnum  (a == b)
+    EqualTo -> \a b -> fromEnum  (a == b)
     LessThan -> \a b -> fromEnum (a < b)
     GreaterThan -> \a b -> fromEnum (a >= b)

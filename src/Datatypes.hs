@@ -46,10 +46,13 @@ data Item = Variable String
           | Immediate Int
           deriving (Eq, Show)
 
-data IR = RRR BinaryOp Int Int Int Bool
-        | RRI BinaryOp Int Int Int Bool
-        | LoadImmediateIR Int Int Bool
-        | LoadConstantIR Int Int Bool
+data IR = ThreeIR BinaryOp IRItem IRItem IRItem Bool
+        | TwoIR IRItem IRItem Bool
         | LoadIR
         | StoreIR
-        deriving (Show)
+        deriving (Eq, Show)
+
+data IRItem = R Int
+            | C Int
+            | I Int
+            deriving (Eq, Show)

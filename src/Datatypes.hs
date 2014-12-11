@@ -24,9 +24,7 @@ data Expression = BinaryExpression BinaryOp Expression Expression
                 | ExpressionItem Item
                 deriving (Eq, Show)
 
-data BinaryOp = And
-              | Or
-              | BitwiseAnd
+data BinaryOp = BitwiseAnd
               | BitwiseOr
               | BitwiseXor
               | Plus

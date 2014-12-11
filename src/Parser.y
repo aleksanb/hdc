@@ -85,8 +85,8 @@ assignment_operator : "="    { AssignmentStraightUp }
                     | "-="   { AssignmentBinaryOp Minus }
                     | "*="   { AssignmentBinaryOp Multiply }
 
-expression : expression and expression   { BinaryExpression And $1 $3 }
-           | expression or expression    { BinaryExpression Or $1 $3 }
+expression : expression and expression   { BinaryExpression BitwiseAnd $1 $3 }
+           | expression or expression    { BinaryExpression BitwiseOr $1 $3 }
            | expression "&" expression   { BinaryExpression BitwiseAnd $1 $3 }
            | expression "|" expression   { BinaryExpression BitwiseOr $1 $3 }
            | expression "^" expression   { BinaryExpression BitwiseXor $1 $3 }

@@ -101,15 +101,10 @@ registerForItem :: Item -> State CodeGenState IRItem
 registerForItem (Register register) = do
   return $ fromRegister register
 
-
 registerForItem (Variable variable) = do
   CGS (register:registers) variables code <- get
-  case Map.lookup variable variables of
-    Just reg ->
-      return $ R reg
-    Nothing -> do
-      put (CGS registers (Map.insert variable register variables) code)
-      return $ R register
+  put (CGS registers (Map.insert variable register variables) code)
+  return $ R register
 
 
 emitInstruction :: IR -> State CodeGenState ()

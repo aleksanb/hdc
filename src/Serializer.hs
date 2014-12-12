@@ -36,6 +36,8 @@ serializeInstruction (ThreeIR operator (R rd) (R rs) (I sh) masked) =
                ShiftRight -> Op.Srl
                ShiftRightArithmetic -> Op.Sra
 
+serializeInstruction (ThreeIR op rd (I rs) (R rt) masked)
+ | op == Plus = serializeInstruction (ThreeIR op rd (R rt) (I rs) masked)
 
 serializeInstruction LoadIR = "lw"
 

@@ -4,7 +4,6 @@ import Datatypes
 import Data.Maybe
 import Data.Bits
 import Control.Monad.State
-import Control.Monad.Fix
 import qualified Data.Map as Map
 
 type Constants = Map.Map Int Int

@@ -5,5 +5,4 @@ import qualified Optimizer.RegisterAllocation as RegisterAllocation
 import Datatypes
 
 optimize :: [IR] -> [IR]
-optimize ir = (RegisterAllocation.optimize
- . Constants.optimize) ir
+optimize ir = (RegisterAllocation.optimize . Constants.optimize) ir

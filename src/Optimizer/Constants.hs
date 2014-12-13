@@ -26,10 +26,13 @@ fixedPoint ir
   | otherwise = optimize ir'
   where ir' = evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)])
 
+
 propagateConstant :: IR -> State Constants IR
 propagateConstant ir@(TwoIR (R r1) (I i1) m) = do
   constants <- get
-  put $ Map.insert r1 i1 constants
+  put (if m
+        then Map.delete r1 constants
+        else Map.insert r1 i1 constants)
   return ir
 
 propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
@@ -37,7 +40,9 @@ propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
       newIR = TwoIR (R r1) (I newImmediate) m
 
   constants <- get
-  put $ Map.insert r1 newImmediate constants
+  put (if m
+        then Map.delete r1 constants
+        else Map.insert r1 newImmediate constants)
   return newIR
 
 propagateConstant original@(ThreeIR op (R r1) r2 r3 mask) = do
@@ -61,7 +66,6 @@ propagateConstant original@(ThreeIR op (R r1) r2 r3 mask) = do
         put $ Map.delete r1 constants
         return original
 
-
 propagateConstant other = do return other
 
 
@@ -73,6 +77,7 @@ getFor (R reg) = do
             _ -> R reg)
 
 getFor other = do return other
+
 
 operatorFor :: BinaryOp -> Int -> Int -> Int
 operatorFor op =

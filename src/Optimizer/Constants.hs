@@ -24,12 +24,7 @@ cleanZeros other = other
 fixedPoint ir
   | ir == ir' = ir
   | otherwise = optimize ir'
-  where ir' = evalState (propagateConstants ir) (Map.fromList [(0, 0)])
-
-propagateConstants :: [IR] -> State Constants [IR]
-propagateConstants ir = do
-  mapM (propagateConstant) ir
-
+  where ir' = evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)])
 
 propagateConstant :: IR -> State Constants IR
 propagateConstant ir@(TwoIR (R r1) (I i1) m) = do

@@ -18,10 +18,10 @@ data CG =
 optimize :: [IR] -> [IR]
 optimize ir =
   let liveVariables = getLiveVariables ir
-      CG _ _ pm = execState
+      CG _ _ registerMappings = execState
         (mapM_ allocateRegisters liveVariables)
         (CG [7..15] Map.empty Map.empty)
-  in map (rewriteRegisters pm) ir
+  in map (rewriteRegisters registerMappings) ir
 
 --------------------------
 -- Rewrite instructions --

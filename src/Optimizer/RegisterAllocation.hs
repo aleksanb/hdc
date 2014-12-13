@@ -5,7 +5,7 @@ import Data.List
 import Data.Maybe
 import qualified Data.Map as Map
 import Control.Monad.State
-
+import Optimizer.Dataflow(getLiveVariables)
 
 data CG =
   CG {
@@ -17,13 +17,15 @@ data CG =
 
 optimize :: [IR] -> [IR]
 optimize ir =
-  let live = foldr analyseLiveness [[]] ir
-      liveVariables = map (\(a, b) -> union a b) (zip live ((tail live) ++ [[]]))
+  let liveVariables = getLiveVariables ir
       CG _ _ pm = execState
         (mapM_ allocateRegisters liveVariables)
         (CG [7..15] Map.empty Map.empty)
   in map (rewriteRegisters pm) ir
 
+--------------------------
+-- Rewrite instructions --
+--------------------------
 
 rewriteRegisters :: Map.Map Int Int -> IR -> IR
 rewriteRegisters permaMap (ThreeIR op r1 r2 r3 m) =
@@ -50,6 +52,9 @@ getPermaReg (R reg) permaMap
 
 getPermaReg other _ = other
 
+-------------------------
+-- Register allocation --
+-------------------------
 
 allocateRegisters :: [Int] -> State CG ()
 allocateRegisters liveVars = do
@@ -60,6 +65,7 @@ allocateRegisters liveVars = do
 
   mapM_ freeVar freedVars
   mapM_ generateVar generatedVars
+
 
 generateVar :: Int -> State CG ()
 generateVar liveVar
@@ -82,26 +88,3 @@ freeVar liveVar
           (val:regs)
           (Map.delete liveVar tempMap)
           (Map.insert liveVar val permaMap))
-
-
-analyseLiveness :: IR -> [[Int]] -> [[Int]]
-analyseLiveness (ThreeIR _ r1 r2 r3 _) (live:lives) =
-  let gen = (toI r2) ++ (toI r3)
-      kill = toI r1
-      live' = gen `union` (live \\ kill)
-  in live':live:lives
-
-analyseLiveness (TwoIR r1 _ _) (live:lives) =
-  let kill = toI r1
-      live' = live \\ kill
-  in live':live:lives
-
-analyseLiveness _ lives = lives
-
-
-toI :: IRItem -> [Int]
-toI (R r)
-  | r < 7 = []
-  | otherwise = [r]
-
-toI _ = []

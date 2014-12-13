@@ -45,13 +45,27 @@ propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
   put $ Map.insert r1 newImmediate constants
   return newIR
 
-propagateConstant (ThreeIR op (R r1) r2 r3 mask) = do
+propagateConstant original@(ThreeIR op (R r1) r2 r3 mask) = do
   r2' <- getFor r2
   r3' <- getFor r3
+  let patched = ThreeIR op (R r1) r2' r3' mask
 
   constants <- get
-  put $ Map.delete r1 constants
-  return $ ThreeIR op (R r1) r2' r3' mask
+
+  case (r2', r3') of
+    (I i1, I i2) -> propagateConstant patched
+    (I i1, R _)
+      | op == Plus -> do
+        put $ Map.delete r1 constants
+        return patched
+    (R _, I i1)
+      | op `elem` [Plus, ShiftLeft, ShiftRight, ShiftRightArithmetic] -> do
+        put $ Map.delete r1 constants
+        return patched
+    _ -> do
+        put $ Map.delete r1 constants
+        return original
+
 
 propagateConstant other = do return other
 

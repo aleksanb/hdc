@@ -4,7 +4,6 @@ import Datatypes
 import Data.Maybe
 import Data.Bits
 import Control.Monad.State
-import Control.Monad.Fix
 import qualified Data.Map as Map
 
 type Constants = Map.Map Int Int
@@ -25,17 +24,15 @@ cleanZeros other = other
 fixedPoint ir
   | ir == ir' = ir
   | otherwise = optimize ir'
-  where ir' = evalState (propagateConstants ir) (Map.fromList [(0, 0)])
-
-propagateConstants :: [IR] -> State Constants [IR]
-propagateConstants ir = do
-  mapM (propagateConstant) ir
+  where ir' = evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)])
 
 
 propagateConstant :: IR -> State Constants IR
 propagateConstant ir@(TwoIR (R r1) (I i1) m) = do
   constants <- get
-  put $ Map.insert r1 i1 constants
+  put (if m
+        then Map.delete r1 constants
+        else Map.insert r1 i1 constants)
   return ir
 
 propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
@@ -43,16 +40,31 @@ propagateConstant (ThreeIR op (R r1) (I i1) (I i2) m) = do
       newIR = TwoIR (R r1) (I newImmediate) m
 
   constants <- get
-  put $ Map.insert r1 newImmediate constants
+  put (if m
+        then Map.delete r1 constants
+        else Map.insert r1 newImmediate constants)
   return newIR
 
-propagateConstant (ThreeIR op (R r1) r2 r3 mask) = do
+propagateConstant original@(ThreeIR op (R r1) r2 r3 mask) = do
   r2' <- getFor r2
   r3' <- getFor r3
+  let patched = ThreeIR op (R r1) r2' r3' mask
 
   constants <- get
-  put $ Map.delete r1 constants
-  return $ ThreeIR op (R r1) r2' r3' mask
+
+  case (r2', r3') of
+    (I i1, I i2) -> propagateConstant patched
+    (I i1, R _)
+      | op == Plus -> do
+        put $ Map.delete r1 constants
+        return patched
+    (R _, I i1)
+      | op `elem` [Plus, ShiftLeft, ShiftRight, ShiftRightArithmetic] -> do
+        put $ Map.delete r1 constants
+        return patched
+    _ -> do
+        put $ Map.delete r1 constants
+        return original
 
 propagateConstant other = do return other
 
@@ -65,6 +77,7 @@ getFor (R reg) = do
             _ -> R reg)
 
 getFor other = do return other
+
 
 operatorFor :: BinaryOp -> Int -> Int -> Int
 operatorFor op =

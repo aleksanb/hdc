@@ -96,9 +96,9 @@ expression : expression and expression   { BinaryExpression BitwiseAnd $1 $3 }
            | expression "<" expression   { BinaryExpression LessThan $1 $3 }
            | expression ">" expression   { BinaryExpression GreaterThan $1 $3 }
            | expression "==" expression  { BinaryExpression EqualTo $1 $3 }
-           | expression "<<" expression  { BinaryExpression ShiftLeft $1 $3 }
-           | expression ">>" expression  { BinaryExpression ShiftRightArithmetic $1 $3 }
-           | expression ">>>" expression { BinaryExpression ShiftRight $1 $3 }
+           | expression "<<" immediate   { BinaryExpression ShiftLeft $1 (ExpressionItem $3) }
+           | expression ">>" immediate   { BinaryExpression ShiftRightArithmetic $1 (ExpressionItem $3) }
+           | expression ">>>" immediate  { BinaryExpression ShiftRight $1 (ExpressionItem $3) }
            | expression "?" expression ":" expression { TernaryExpression $1 $3 $5 }
            | "-" expression %prec UMINUS { BinaryExpression Minus (ExpressionItem (Immediate 0)) $2 }
            | expression in "[" list "]"  { IsInList $1 $4 }

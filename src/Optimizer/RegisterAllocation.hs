@@ -5,6 +5,7 @@ import Data.List
 import Data.Maybe
 import qualified Data.Map as Map
 import Control.Monad.State
+import Control.Monad.Writer
 import Optimizer.Dataflow(getLiveVariables)
 
 data CG =
@@ -15,13 +16,16 @@ data CG =
   }
   deriving (Show)
 
-optimize :: [IR] -> [IR]
-optimize ir =
+optimize :: [IR] -> Writer [String] [IR]
+optimize ir = do
   let liveVariables = getLiveVariables ir
+      registersUsed = maximum $ map length liveVariables
       CG _ _ registerMappings = execState
         (mapM_ allocateRegisters liveVariables)
-        (CG [7..15] Map.empty Map.empty)
-  in map (rewriteRegisters registerMappings) ir
+        (CG [7..] Map.empty Map.empty)
+
+  tell [ "Program mapped using " ++ show registersUsed ++ " of 9 available registers" ]
+  return $ map (rewriteRegisters registerMappings) ir
 
 --------------------------
 -- Rewrite instructions --
@@ -73,7 +77,7 @@ generateVar liveVar
   | otherwise = do
     CG (reg:regs) tempMap permaMap <- get
     put (CG
-          (regs)
+          regs
           (Map.insert liveVar reg tempMap)
           permaMap)
 

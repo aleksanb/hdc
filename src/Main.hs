@@ -14,7 +14,7 @@ runEvalWith input = do
   let ast = Beautifier.beautify syntax_tree
   putStrLn $ "Ast:\n" ++ Pr.ppShow ast
 
-  let ir = Generator.getGeneratedCode $ Generator.generate ast
+  let ir = Generator.generate ast
   putStrLn $ "IR:\n" ++ Pr.ppShow ir
 
   let (optimized, stats) = runWriter $ Optimizer.optimize ir

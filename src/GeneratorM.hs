@@ -1,4 +1,4 @@
-module GeneratorM(generate, getGeneratedCode) where
+module GeneratorM(generate) where
 
 import Datatypes
 import Text.Printf
@@ -15,20 +15,13 @@ data CodeGenState =
   }
   deriving (Show)
 
-getGeneratedCode = generatedCode
 
-
-generate :: Program -> CodeGenState
-generate program =
-  let cgs = CGS [7..100] Map.empty []
-      CGS r v c = execState (generateProgram program) cgs
-  in CGS r v $ reverse c
-
-
-generateProgram :: Program -> State CodeGenState ()
-generateProgram (Program statements) = do
-  mapM generateStatement statements
-  return ()
+generate :: Program -> [IR]
+generate (Program statements) =
+  let CGS registers variables code = execState
+        (mapM generateStatement statements)
+        (CGS [7..] Map.empty [])
+  in reverse code
 
 
 generateStatement :: Statement -> State CodeGenState ()

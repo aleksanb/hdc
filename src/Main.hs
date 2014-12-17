@@ -5,21 +5,25 @@ import qualified Serializer
 import qualified Optimizer
 import qualified Text.Show.Pretty as Pr
 
+import Control.Monad.Writer
+
 runEvalWith input = do
   let syntax_tree = Parser.parse input
-  putStrLn $ "Syntax tree:\n" ++ (Pr.ppShow syntax_tree)
+  putStrLn $ "Syntax tree:\n" ++ Pr.ppShow syntax_tree
 
   let ast = Beautifier.beautify syntax_tree
-  putStrLn $ "Ast:\n" ++ (Pr.ppShow ast)
+  putStrLn $ "Ast:\n" ++ Pr.ppShow ast
 
-  let ir = Generator.generate ast
-  putStrLn $ "IR:\n" ++ (Pr.ppShow ir)
+  let ir = Generator.getGeneratedCode $ Generator.generate ast
+  putStrLn $ "IR:\n" ++ Pr.ppShow ir
 
-  let optimized = Optimizer.optimize $ Generator.getGeneratedCode ir
-  putStrLn $ "Optimized:\n" ++ (Pr.ppShow optimized)
+  let (optimized, stats) = runWriter $ Optimizer.optimize ir
+  putStrLn $ "Optimized:\n" ++ Pr.ppShow optimized
 
   let assembly = Serializer.serialize optimized
-  putStrLn $ "Assembly:\n" ++ (unlines assembly)
+  putStrLn $ "Assembly:\n" ++ unlines assembly
+
+  putStrLn $ unlines stats
 
 main :: IO ()
 main = do

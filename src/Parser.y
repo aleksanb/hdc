@@ -22,6 +22,7 @@ import Datatypes
   "+"               { TokenPlus }
   "-"               { TokenMinus }
   "*"               { TokenMultiply }
+  "**"              { TokenPower }
   "<<"              { TokenShiftLeft }
   ">>"              { TokenShiftRight }
   ">>>"             { TokenShiftRightArithmetic }
@@ -60,6 +61,7 @@ import Datatypes
 %left "<<" ">>" ">>>"
 %left "+" "-"
 %left "*"
+%left "**"
 %nonassoc UMINUS
 
 %%
@@ -93,6 +95,7 @@ expression : expression and expression   { BinaryExpression BitwiseAnd $1 $3 }
            | expression "+" expression   { BinaryExpression Plus $1 $3 }
            | expression "-" expression   { BinaryExpression Minus $1 $3 }
            | expression "*" expression   { BinaryExpression Multiply $1 $3 }
+           | expression "**" immediate   { BinaryExpression Power $1 (ExpressionItem $3) }
            | expression "<" expression   { BinaryExpression LessThan $1 $3 }
            | expression ">" expression   { BinaryExpression GreaterThan $1 $3 }
            | expression "==" expression  { BinaryExpression EqualTo $1 $3 }

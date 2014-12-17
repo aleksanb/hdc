@@ -23,6 +23,7 @@ tokens :-
   "+"               { \s -> TokenPlus }
   "-"               { \s -> TokenMinus }
   "*"               { \s -> TokenMultiply }
+  "**"              { \s -> TokenPower }
   "<<"              { \s -> TokenShiftLeft }
   ">>"              { \s -> TokenShiftRight }
   ">>>"             { \s -> TokenShiftRightArithmetic }
@@ -60,6 +61,7 @@ data Token = TokenIn
            | TokenPlus
            | TokenMinus
            | TokenMultiply
+           | TokenPower
            | TokenShiftLeft
            | TokenShiftRight
            | TokenShiftRightArithmetic

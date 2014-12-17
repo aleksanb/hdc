@@ -30,6 +30,7 @@ data BinaryOp = BitwiseAnd
               | Plus
               | Minus
               | Multiply
+              | Power
               | LessThan
               | GreaterThan
               | EqualTo

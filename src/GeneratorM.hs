@@ -49,6 +49,17 @@ generateStatement (BuiltinStatement builtinStatement) = do
 
 
 generateExpression :: Expression -> State CodeGenState IRItem
+generateExpression (BinaryExpression Power e1 (ExpressionItem (Immediate power)))
+  | power < 1 = error $ "Expected positive exponent (found " ++ show power ++ ")"
+  | otherwise = do
+    reg <- generateExpression e1
+    mapM
+      emitInstruction
+      $ replicate (power-1) (ThreeIR Multiply reg reg reg False)
+
+    return reg
+
+
 generateExpression (BinaryExpression op e1 e2) = do
   reg1 <- generateExpression e1
   reg2 <- generateExpression e2

@@ -21,6 +21,6 @@ $mask |=
   x in [boxTwo, -boxTwo] and (y < boxTwo) and (-boxTwo < y)
   or y in [boxTwo, -boxTwo] and (x < boxTwo) and (-boxTwo < x)
 
-$data += $mask ? 0xE000 : 0x0000
+$data = $mask ? 0xE000 : 0x0000
 
 store!

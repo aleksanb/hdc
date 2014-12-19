@@ -53,11 +53,10 @@ import Datatypes
 %left or
 %left and
 %left in
+%left "==" "<" ">"
 %left "|"
 %left "^"
 %left "&"
-%left "=="
-%left "<" ">"
 %left "<<" ">>" ">>>"
 %left "+" "-"
 %left "*"

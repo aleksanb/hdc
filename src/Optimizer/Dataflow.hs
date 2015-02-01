@@ -1,4 +1,4 @@
-module Optimizer.Dataflow(getLiveVariables) where
+module Optimizer.Dataflow(getLiveVariables, fixedPoint) where
 
 import Datatypes
 import Data.List
@@ -33,3 +33,10 @@ toI (R r)
   | otherwise = [r]
 
 toI _ = []
+
+
+fixedPoint :: Eq a => (a -> a) -> a -> a
+fixedPoint f x
+  | x == x' = x
+  | otherwise = fixedPoint f x'
+  where x' = f x

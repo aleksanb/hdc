@@ -38,7 +38,10 @@ propagateCopyStatements others = do return others
 
 
 collectCopyStatement :: IR -> State CopyMappings ()
-collectCopyStatement (ThreeIR Plus (R r1) (R r2) (R r3) _)
+collectCopyStatement (ThreeIR Plus (R r1) (R r2) (R r3) m)
+  | m == True = do
+    mapping <- get
+    put (Map.delete r1 mapping)
   | r2 == 0 = putMapping r1 r3
   | r3 == 0 = putMapping r1 r2
 

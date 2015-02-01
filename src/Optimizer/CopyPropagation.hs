@@ -3,7 +3,7 @@ module Optimizer.CopyPropagation(optimize) where
 import Datatypes
 import Control.Monad.State
 import Control.Monad.Writer
-import Optimizer.Dataflow(getLiveVariables)
+import Optimizer.Dataflow(getLiveVariables, fixedPoint)
 import qualified Data.Map as Map
 
 type CopyMappings = Map.Map Int Int
@@ -12,8 +12,12 @@ optimize :: [IR] -> Writer [String] [IR]
 optimize ir = do
   let liveVariables = getLiveVariables ir
       copyMappings = execState (mapM_ collectCopyStatement ir) Map.empty
-      optimizedIR = evalState (mapM propagateCopyStatements ir) copyMappings
-  tell [ "Propagated "
+      optimizedIR =
+        fixedPoint
+          (\ir -> evalState (mapM propagateCopyStatements ir) copyMappings)
+          ir
+
+  tell [ "Found "
           ++ show (Map.size copyMappings)
           ++ " copy statement(s): "
           ++ show copyMappings ]

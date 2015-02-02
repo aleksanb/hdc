@@ -10,8 +10,10 @@ import Control.Monad.Writer
 
 optimize :: [IR] -> Writer [String] [IR]
 optimize ir = do
-  let constantsOptimized = Constants.optimize ir
   foldM
     (\ir f -> f ir)
-    constantsOptimized
-    [CopyPropagation.optimize, DeadCodeElimination.optimize, RegisterAllocation.optimize]
+    ir
+    [ Constants.optimize,
+      CopyPropagation.optimize,
+      DeadCodeElimination.optimize,
+      RegisterAllocation.optimize ]

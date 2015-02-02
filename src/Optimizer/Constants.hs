@@ -3,6 +3,7 @@ module Optimizer.Constants(optimize) where
 import Datatypes
 import Data.Maybe
 import Data.Bits
+import Control.Monad.Writer
 import Control.Monad.State
 import Optimizer.Dataflow(fixedPoint)
 import qualified Data.Map as Map
@@ -10,11 +11,13 @@ import qualified Data.Map as Map
 type Constants = Map.Map Int Int
 
 
-optimize :: [IR] -> [IR]
-optimize ir = map cleanZeros
-  $ fixedPoint
-    (\ir -> evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)]))
-    ir
+optimize :: [IR] -> Writer [String] [IR]
+optimize ir = do
+  let optimizedIR =
+        fixedPoint
+          (\ir -> evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)]))
+          ir
+  return $ map cleanZeros optimizedIR
 
 
 cleanZeros :: IR -> IR

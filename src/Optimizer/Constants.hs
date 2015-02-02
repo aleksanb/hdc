@@ -4,13 +4,17 @@ import Datatypes
 import Data.Maybe
 import Data.Bits
 import Control.Monad.State
+import Optimizer.Dataflow(fixedPoint)
 import qualified Data.Map as Map
 
 type Constants = Map.Map Int Int
 
 
 optimize :: [IR] -> [IR]
-optimize ir = map cleanZeros $ fixedPoint ir
+optimize ir = map cleanZeros
+  $ fixedPoint
+    (\ir -> evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)]))
+    ir
 
 
 cleanZeros :: IR -> IR
@@ -19,12 +23,6 @@ cleanZeros ir@(ThreeIR op rd (I i) rt m)
 cleanZeros ir@(ThreeIR op rd rs (I i) m)
   | i == 0 = ThreeIR op rd rs (R 0) m
 cleanZeros other = other
-
-
-fixedPoint ir
-  | ir == ir' = ir
-  | otherwise = optimize ir'
-  where ir' = evalState (mapM propagateConstant ir) (Map.fromList [(0, 0)])
 
 
 propagateConstant :: IR -> State Constants IR

@@ -24,7 +24,9 @@ optimize ir = do
         (mapM_ allocateRegisters liveVariables)
         (CG [7..] Map.empty Map.empty)
 
-  tell [ "Program mapped using " ++ show registersUsed ++ " of 9 available registers" ]
+  tell [ "Program mapped using "
+          ++ show registersUsed
+          ++ " of 9 general purpose registers" ]
   return $ map (rewriteRegisters registerMappings) ir
 
 --------------------------

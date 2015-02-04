@@ -13,6 +13,7 @@ pPutStrLn predicate line
   | predicate == True = do putStrLn line
   | otherwise = do return ()
 
+runEvalWith :: String -> IO ()
 runEvalWith input = do
   args <- getArgs
   let verbose = "--verbose" `elem` args

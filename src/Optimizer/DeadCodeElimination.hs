@@ -14,7 +14,10 @@ optimize ir = do
             in filter (keepInstruction liveVariables) ir)
           ir
 
-  tell [ show (length ir - length prunedIR) ++ " statements out of " ++ show (length ir) ++ " found dead." ]
+  tell [ show (length ir - length prunedIR)
+          ++ " statements out of "
+          ++ show (length ir)
+          ++ " found dead" ]
   return prunedIR
 
 keepInstruction :: [Int] -> IR -> Bool

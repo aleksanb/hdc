@@ -17,10 +17,8 @@ optimize ir = do
           (\ir -> evalState (mapM propagateCopyStatements ir) copyMappings)
           ir
 
-  tell [ "Found "
-          ++ show (Map.size copyMappings)
-          ++ " copy statement(s): "
-          ++ show copyMappings ]
+  tell [ show (Map.size copyMappings)
+          ++ " copy statement(s) collapsed" ]
   return optimizedIR
 
 

@@ -11,16 +11,17 @@ data CodeGenState =
   CGS {
     availableRegisters :: [Int],
     variables :: (Map.Map String Int),
-    generatedCode :: [IR]
+    generatedCode :: [IR],
+    currentLineNumber :: Int
   }
   deriving (Show)
 
 
 generate :: Program -> [IR]
 generate (Program statements) =
-  let CGS registers variables code = execState
+  let CGS registers variables code _ = execState
         (mapM generateStatement statements)
-        (CGS [7..] Map.empty [])
+        (CGS [7..] Map.empty [] 0)
   in reverse code
 
 
@@ -77,9 +78,13 @@ generateExpression (TernaryExpression e1 e2 e3) = do
 
 
 generateExpression (ExpressionItem item) = do
-  CGS (register:registers) variables generatedCode <- get
+  CGS (register:registers) variables generatedCode cln <- get
   case item of
-    Variable name -> return $ R $ fromJust $ Map.lookup name variables
+    Variable name ->
+      case Map.lookup name variables of
+        Just val -> return $ R val
+        _ -> error $ "Undefined variable '" ++ name  ++ "' around line " ++ show cln
+
     Register name -> return $ fromRegister name
     Immediate int -> do
       reg <- getRegister
@@ -98,7 +103,7 @@ generateExpression (ExpressionItem item) = do
 getRegister :: State CodeGenState IRItem
 getRegister = do
   state popRegister
-  where popRegister (CGS (r:rs) v c) = ((R r), CGS rs v c)
+  where popRegister (CGS (r:rs) v c cln) = ((R r), CGS rs v c cln)
 
 
 registerForItem :: Item -> State CodeGenState IRItem
@@ -106,15 +111,15 @@ registerForItem (Register register) = do
   return $ fromRegister register
 
 registerForItem (Variable variable) = do
-  CGS (register:registers) variables code <- get
-  put (CGS registers (Map.insert variable register variables) code)
+  CGS (register:registers) variables code cln <- get
+  put (CGS registers (Map.insert variable register variables) code cln)
   return $ R register
 
 
 emitInstruction :: IR -> State CodeGenState ()
 emitInstruction instruction = do
   state appendInstruction
-  where appendInstruction (CGS rs v is) = ((), CGS rs v (instruction:is))
+  where appendInstruction (CGS rs v is cln) = ((), CGS rs v (instruction:is) (cln + 1))
 
 
 fromRegister :: String -> IRItem

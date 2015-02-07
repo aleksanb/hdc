@@ -1,8 +1,11 @@
 module Generator(generate) where
+
 import Datatypes
 import Text.Printf
 import Data.Maybe
+import Control.Monad.State
 import qualified Data.Map as Map
+
 
 data CodeGenState =
   CGS {
@@ -13,111 +16,108 @@ data CodeGenState =
   deriving (Show)
 
 
-generateProgram :: CodeGenState -> Program -> CodeGenState
-generateProgram cgs (Program statements) =
-  let (CGS registers variables generatedCode) = foldl (\cgs statement -> generateStatement cgs statement)  cgs statements
-  in CGS registers variables $ reverse generatedCode
+generate :: Program -> [IR]
+generate (Program statements) =
+  let CGS registers variables code = execState
+        (mapM generateStatement statements)
+        (CGS [7..] Map.empty [])
+  in reverse code
 
 
-generateStatement :: CodeGenState -> Statement -> CodeGenState
-generateStatement cgs (AssignmentStatement (Assignment lefthand assignmentOperator righthand)) =
-  let ((CGS (freeRegister:rest) variables generatedCode), reg1) = generateExpression cgs righthand
+generateStatement :: Statement -> State CodeGenState ()
+generateStatement (AssignmentStatement (Assignment item _ e1)) = do
+  reg1 <- generateExpression e1
+  lefthand <- registerForItem item
 
-      targetRegister = case lefthand of
-        Register register ->
-          fromRegister register
-        Variable variable ->
-          if Map.member variable variables then
-            fromJust (Map.lookup variable variables)
-          else
-            freeRegister
+  emitInstruction $ ThreeIR Plus lefthand (R 0) reg1 False
 
-      newvariables = case lefthand of
-        Register _ ->
-          variables
-        Variable variable ->
-          Map.insert variable targetRegister variables
 
-      assignment = ThreeIR Plus targetRegister 0 reg1 False
+generateStatement (BuiltinStatement builtinStatement) = do
+  let instruction =
+        case builtinStatement of
+          LoadStatement -> LoadIR
+          storeStatement -> StoreIR
 
-  in CGS rest newvariables (assignment : generatedCode)
+  emitInstruction instruction
 
-generateStatement (CGS registers variables generatedCode) (BuiltinStatement builtin) =
-  case builtin of
-    LoadStatement ->
-      CGS registers variables $ LoadIR:generatedCode
-    StoreStatement ->
-      CGS registers variables $ StoreIR:generatedCode
 
-generateExpression :: CodeGenState -> Expression -> (CodeGenState, Int)
-generateExpression cgs (BinaryExpression op e1 e2) =
-  let (cgs1, reg1) = generateExpression cgs e1
-      ((CGS (freeRegister:rest) variables generatedCode), reg2) = generateExpression cgs1 e2
-      assignment = ThreeIR op freeRegister reg1 reg2 False
-  in (CGS rest variables (assignment : generatedCode), freeRegister)
+generateExpression :: Expression -> State CodeGenState IRItem
+generateExpression (BinaryExpression Power e1 (ExpressionItem (Immediate power)))
+  | power < 1 = error $ "Expected positive exponent (found " ++ show power ++ ")"
+  | otherwise = do
+    reg <- generateExpression e1
+    mapM
+      emitInstruction
+      $ replicate (power-1) (ThreeIR Multiply reg reg reg False)
 
-generateExpression cgs (TernaryExpression e1 e2 e3) =
-  let (cgs1, reg1) = generateExpression cgs e1
-      (cgs2, reg2) = generateExpression cgs e2
-      ((CGS (freeRegister:rest) variables generatedCode), reg3) = generateExpression cgs2 e3
-      firstExpression = ThreeIR Plus freeRegister 0 reg2 False
-      secondExpression = ThreeIR Plus freeRegister 0 reg3 True
-  in (CGS rest variables (secondExpression:firstExpression:generatedCode), freeRegister)
+    return reg
 
-generateExpression cgs@(CGS (freeRegister:registers) variables generatedCode) (ExpressionItem item) =
+
+generateExpression (BinaryExpression op e1 e2) = do
+  reg1 <- generateExpression e1
+  reg2 <- generateExpression e2
+
+  targetReg <- getRegister
+  emitInstruction $ ThreeIR op targetReg reg1 reg2 False
+
+  return targetReg
+
+
+generateExpression (TernaryExpression e1 e2 e3) = do
+  reg1 <- generateExpression e1
+  reg2 <- generateExpression e2
+  reg3 <- generateExpression e3
+
+  targetReg <- getRegister
+  emitInstruction $ ThreeIR Plus (R 6) (R 0) reg1 False
+  emitInstruction $ ThreeIR Plus targetReg (R 0) reg2 False
+  emitInstruction $ ThreeIR Plus targetReg (R 0) reg3 True
+
+  return targetReg
+
+
+generateExpression (ExpressionItem item) = do
+  CGS (register:registers) variables generatedCode <- get
   case item of
-    Variable name ->
-      (cgs, fromJust (Map.lookup name variables))
-    Register name ->
-      (cgs, fromRegister name)
-    DecimalInt decimalInt ->
-      (CGS registers variables (LoadImmediateIR freeRegister decimalInt False:generatedCode), freeRegister )
-    HexInt hexInt ->
-      (CGS registers variables (LoadImmediateIR freeRegister hexInt False:generatedCode), freeRegister)
-    Constant constant ->
-      (CGS registers variables (LoadConstantIR freeRegister constant False:generatedCode), freeRegister)
+    Variable name -> return $ R $ fromJust $ Map.lookup name variables
+    Register name -> return $ fromRegister name
+    Immediate int -> do
+      reg <- getRegister
+      emitInstruction $ TwoIR reg (I int) False
+      return reg
+
+    Constant constant -> do
+      reg <- getRegister
+      emitInstruction $ TwoIR reg (C constant) False
+      return reg
+
+-----------------------------------------------
+-- Move the functions below to separate file --
+-----------------------------------------------
+
+getRegister :: State CodeGenState IRItem
+getRegister = do
+  state popRegister
+  where popRegister (CGS (r:rs) v c) = ((R r), CGS rs v c)
 
 
-fromRegister :: String -> Int
+registerForItem :: Item -> State CodeGenState IRItem
+registerForItem (Register register) = do
+  return $ fromRegister register
+
+registerForItem (Variable variable) = do
+  CGS (register:registers) variables code <- get
+  put (CGS registers (Map.insert variable register variables) code)
+  return $ R register
+
+
+emitInstruction :: IR -> State CodeGenState ()
+emitInstruction instruction = do
+  state appendInstruction
+  where appendInstruction (CGS rs v is) = ((), CGS rs v (instruction:is))
+
+
+fromRegister :: String -> IRItem
 fromRegister register =
   let mapping = Map.fromList [("zero", 0), ("id_high", 1), ("id_low", 2), ("address_high", 3), ("address_low", 4), ("data", 5), ("mask", 6)]
-  in fromJust (Map.lookup register mapping)
-
-  -- Commented block here provides assembly output endpoint
-  --let mapping = Map.fromList [(And, "and"), (Or, "or"), (BitwiseAnd, "and"), (BitwiseOr, "or"), (BitwiseXor, "xor"), (Plus, "add"), (Minus, "sub"), (Multiply, "mul"), (LessThan, "slt"), (EqualTo, "seq")]
-  --in (fromJust (Map.lookup op mapping)) ++ " $" ++ show lhs ++ " $" ++ show operand1 ++ " $" ++ show operand2 ++ "\n"
-
--- Commented mainblock useful for testing things separately
---main = do
---  let cgs = CGS [7..15] (Map.fromList [("a", 10)]) []
---      variable = generateExpression cgs (ExpressionItem (Variable "a"))
---      simpleStatement = AssignmentStatement
---        (Assignment
---          (Variable "b")
---          AssignmentStraightUp
---          (BinaryExpression
---            Plus
---            (ExpressionItem (Register "data"))
---            (BinaryExpression
---              Plus
---              (ExpressionItem (Register "data"))
---              (ExpressionItem (Register "data")))))
---      simpleProgram = Program [simpleStatement]
---
---  putStrLn ""
---  putStrLn $ show variable
---  putStrLn ""
---  putStrLn $ show $ generateStatement cgs simpleStatement
---  putStrLn ""
---  putStrLn $ show $ generateProgram cgs simpleProgram
---  putStrLn ""
-
---let cgs = CGS [7..15] (Map.fromList [("a", 10)]) []
--- generateExpression cgs (ExpressionItem (Variable "a"))
--- generateExpression cgs (BinaryExpression Plus (ExpressionItem (Variable "a")) (ExpressionItem (Register "data")))
--- generateIR Plus 10 10 10
-
--- let assignment = AssignmentStatement (Assignment (Variable "a") AssignmentStraightUp (BinaryExpression Plus (ExpressionItem (Variable "data")) (BinaryExpression Plus (ExpressionItem (Variable "data")) (ExpressionItem (Variable "data")))))
---generateStatement cgs assignment
-
-generate = generateProgram (CGS [7..100] Map.empty [])
+  in R $ fromJust (Map.lookup register mapping)

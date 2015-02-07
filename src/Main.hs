@@ -1,7 +1,7 @@
 import System.Environment
 import qualified Parser
 import qualified Beautifier
-import qualified GeneratorM as Generator
+import qualified Generator
 import qualified Serializer
 import qualified Optimizer
 import qualified Text.Show.Pretty as Pr

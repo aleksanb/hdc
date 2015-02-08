@@ -1,5 +1,5 @@
 import System.Environment
-import qualified Includer
+import qualified MacroExpander
 import qualified Parser
 import qualified Beautifier
 import qualified Generator
@@ -21,15 +21,15 @@ main = do
   args <- getArgs
   let verbose = "--verbose" `elem` args
 
-  withMacros <- Includer.include program
-  let syntax_tree = Parser.parse withMacros
+  expandedProgram <- MacroExpander.expand program
+  let syntax_tree = Parser.parse expandedProgram
       ast = Beautifier.beautify syntax_tree
       ir = Generator.generate ast
       (optimized, stats) = runWriter $ Optimizer.optimize ir
       assembly = Serializer.serialize optimized
 
   -- Generate verbose output
-  pPutStrLn verbose $ "Expanded with macros\n" ++ withMacros
+  pPutStrLn verbose $ "Expanded with macros\n" ++ expandedProgram
   pPutStrLn verbose $ "syntax tree:\n" ++ Pr.ppShow syntax_tree
   pPutStrLn verbose $ "Ast:\n" ++ Pr.ppShow ast
   pPutStrLn verbose $ "IR:\n" ++ Pr.ppShow ir

@@ -48,6 +48,56 @@ You should be able to `make` and get a result now!
 
 # D Language features
 
+BCNF grammar is available in [Parser.y](src/Parser.y)
+
+
+## Language constructs
+
+
+### Variables
+
+Variables are available as an abstraction on top of the actual physical registers.
+Variables are declared and used as ```mySum = 10 + somePreviousVariable >> 2".
+
+The compiler will allocate variables to physical registers using a linear allocation algorithm.
+If a program requires more general purpose registers than those available in the demolicious hardware (9), compilation will fail.
+
+
+### Immediate values
+
+Immediate values can be used in place of variables in all expressions.
+
+
+### Constants
+
+Constants can be loaded by indexing the ```$constants[number]``` array, where number has to be some non-negative number.
+Constants are shared across threads, allowing for parameterization of kernels without requiring recompilation.
+
+
+### Load / Store
+
+
+### Assignment operators
+
+Assignment operators are available for all common operators ```=, |=, &=, +=, -=, *=```.
+
+
+### Comparison operators
+
+Expressions can be compared by using the standard ```==, <, >``` operators.
+
+In addition D has support for 'in' statements on the form of ```$data = expression in [e1, e2, e3, e4]``` where $data will be set to 1 if the value of 'expression' is equal to any of the ones in the array on the righthand side.
+
+
+### Control flow
+
+The actual demolicious hardware has no support for branching, but does support masked execution of instructions through the use of a predcate register.
+Ternary expressions are provided as a thin abstraction on top of this, and come on the form of:
+```$data = someExpression ? expressionIfTrue : expressionIfFalse```
+
+Ternary expressions can be nested within themselves, only limited by the number of available general purpose registers in the hardware.
+
+
 ## Macros
 
 The demolicious platform has no support for runtime functions.
@@ -69,6 +119,7 @@ The macro interface consists of the following
 * All local variables must be prefixed with '__'. This to allow for easy namespacing by the compiler.
 * Optional argument bindings, on the form '__local_variable = __param<INDEX>', with a strictly increasing index for each parameter.
 * Optional return binding, on the form '__return = '.
+
 
 ### A working macro implementation
 

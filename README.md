@@ -72,7 +72,7 @@ The macro interface consists of the following
 
 ### A working macro implementation
 
-** main.d **
+**main.d**
 ```
 $address_high = $id_high
 $address_low = $id_low
@@ -81,7 +81,7 @@ $data = @sum(1000, 20)
 store!
 ```
 
-** sum.d **
+**sum.d**
 ```
 __left = __param0
 __right = __param1

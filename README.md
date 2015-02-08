@@ -45,33 +45,34 @@ $ cabal install pretty-show
 
 You should be able to `make` and get a result now!
 
-# The d language
 
-## Language features
+# D Language features
 
-### Macros
+## Macros
 
-The emolicious platform doesn't support functions.
-Instead, the d language provides compile-time macros.
+The demolicious platform has no support for runtime functions.
+Instead, the compiler has support for compile-time expansion of macros.
+This keeps the source code dry, allowing code reuse through shared code fragments.
 
-An example macro invocation will look like the following.
-Macro arguments are optional, result bindings required.
+A macro invocation, ```result = @sin(x, y)```,  looks very much like a function call from other languages.
 
-```result = @sin(x, y)```
+Current limitations include:
 
-Hdc will look for a file with the corresponding name, in this case 'sin.d'.
-The contents will be parameterized with the provided macro arguments and result name.
+* No nesting of macro invocations
+* Result has to be bound to a name
 
 ### Implementing your own d macro
 
-The macro interface is relatively simple to implement.
+The macro interface consists of the following
 
+* To export a '@somename' macro, the d fragment must be named 'somename.d'.
 * All local variables must be prefixed with '__'. This to allow for easy namespacing by the compiler.
-* Argument bindings must be on the form '__local_variable = __param<INDEX>', with a strictly increasing index for each parameter.
-* A return binding, on the form '__return = '
+* Optional argument bindings, on the form '__local_variable = __param<INDEX>', with a strictly increasing index for each parameter.
+* Optional return binding, on the form '__return = '.
 
-A fully working macro with corresponding invocation is presented below.
+### A working macro implementation
 
+** main.d **
 ```
 $address_high = $id_high
 $address_low = $id_low
@@ -80,7 +81,7 @@ $data = @sum(1000, 20)
 store!
 ```
 
-
+** sum.d **
 ```
 __left = __param0
 __right = __param1

@@ -1,4 +1,5 @@
 import System.Environment
+import qualified Includer
 import qualified Parser
 import qualified Beautifier
 import qualified Generator
@@ -16,16 +17,19 @@ pPutStrLn predicate line
 runEvalWith :: String -> IO ()
 runEvalWith input = do
   args <- getArgs
+
   let verbose = "--verbose" `elem` args
 
-  let syntax_tree = Parser.parse input
-  let ast = Beautifier.beautify syntax_tree
-  let ir = Generator.generate ast
-  let (optimized, stats) = runWriter $ Optimizer.optimize ir
-  let assembly = Serializer.serialize optimized
+  withMacros <- Includer.include input
+  let syntax_tree = Parser.parse withMacros
+      ast = Beautifier.beautify syntax_tree
+      ir = Generator.generate ast
+      (optimized, stats) = runWriter $ Optimizer.optimize ir
+      assembly = Serializer.serialize optimized
 
   -- Generate verbose output
-  pPutStrLn verbose  $ "syntax tree:\n" ++ Pr.ppShow syntax_tree
+  pPutStrLn verbose $ "Expanded with macros\n" ++ withMacros
+  pPutStrLn verbose $ "syntax tree:\n" ++ Pr.ppShow syntax_tree
   pPutStrLn verbose $ "Ast:\n" ++ Pr.ppShow ast
   pPutStrLn verbose $ "IR:\n" ++ Pr.ppShow ir
   pPutStrLn verbose $ "Optimized:\n" ++ Pr.ppShow optimized

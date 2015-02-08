@@ -44,3 +44,46 @@ $ cabal install pretty-show
 ```
 
 You should be able to `make` and get a result now!
+
+# The d language
+
+## Language features
+
+### Macros
+
+The emolicious platform doesn't support functions.
+Instead, the d language provides compile-time macros.
+
+An example macro invocation will look like the following.
+Macro arguments are optional, result bindings required.
+
+```result = @sin(x, y)```
+
+Hdc will look for a file with the corresponding name, in this case 'sin.d'.
+The contents will be parameterized with the provided macro arguments and result name.
+
+### Implementing your own d macro
+
+The macro interface is relatively simple to implement.
+
+* All local variables must be prefixed with '__'. This to allow for easy namespacing by the compiler.
+* Argument bindings must be on the form '__local_variable = __param<INDEX>', with a strictly increasing index for each parameter.
+* A return binding, on the form '__return = '
+
+A fully working macro with corresponding invocation is presented below.
+
+```
+$address_high = $id_high
+$address_low = $id_low
+
+$data = @sum(1000, 20)
+store!
+```
+
+
+```
+__left = __param0
+__right = __param1
+
+__return = __left + __right
+```

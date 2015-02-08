@@ -7,33 +7,33 @@ import Text.Regex.Posix
 
 expand :: String -> IO String
 expand program = do
-  let capturedMacros = program =~ "@macro\\((.*)\\)" :: [[String]]
+  let capturedMacros = program =~ "(.*)@(.*)\\((.*)\\)" :: [[String]]
 
-  foldl
-    (\acc (pattern:capture:_) ->
-      liftM3 replace (return pattern) (parseMacro capture) acc)
-    (return program)
-    capturedMacros
-
-
-parseMacro :: String -> IO String
-parseMacro parameters = do
-  let macroFile:macroParameters = split "," parameters
-      macroReturn = last macroParameters
-
-  buildMacro macroFile macroParameters macroReturn
+  fst $ foldl
+    (\(acc, id:ids) (pattern:macroReturn:macroFile:macroParameters:_) ->
+      ((liftM3
+        replace
+          (return pattern)
+          (buildMacro macroFile macroReturn (split ", " macroParameters) id)
+          acc),
+      ids))
+    (return program, [0..])
+    (capturedMacros)
 
 
-buildMacro :: String -> [String] -> String -> IO String
-buildMacro macroFile macroParameters macroReturn = do
-  sourceMacro <- readFile macroFile
-  let bindings =
-        ("__return", macroReturn) :
+buildMacro :: String -> String -> [String] -> Int -> IO String
+buildMacro macroFile macroReturn macroParameters macroID = do
+  sourceMacro <- readFile $ macroFile ++ ".d"
+  let prefix = "_" ++ macroFile ++ "_" ++ show macroID ++ "_"
+      bindings =
+        ("__return =", macroReturn) :
         zip
-          (map (\s -> "__param" ++ show s) [0..])
+          (map (("__param" ++) . show) [0..])
           macroParameters
+      withBoundParameters = foldl
+        (\acc binding -> uncurry replace binding acc)
+        sourceMacro
+        bindings
+      withUniquePrefixes = replace "__" prefix withBoundParameters
 
-  return $ foldl
-    (\acc binding -> uncurry replace binding acc)
-    sourceMacro
-    bindings
+  return withUniquePrefixes

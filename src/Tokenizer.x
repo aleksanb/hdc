@@ -6,7 +6,8 @@ module Tokenizer (Token(..), tokenize) where
 
 $digit = 0-9
 $hexdigit = [0-9a-fA-F]
-$character = [a-zA-Z_]
+$firstcharacter = [a-zA-Z_]
+$character = [a-zA-Z0-9_]
 $eol = [\n]
 
 tokens :-
@@ -49,7 +50,7 @@ tokens :-
   "load!"           { \s -> TokenLoad }
   "store!"          { \s -> TokenStore }
   "constants"       { \s -> TokenConstants }
-  $character+       { \s -> TokenIdentifier s }
+  $firstcharacter$character* { \s -> TokenIdentifier s }
 
 {
 

@@ -7,7 +7,7 @@ import Text.Regex.Posix
 
 expand :: String -> IO String
 expand program = do
-  let capturedMacros = program =~ "(.*)@(.*)\\((.*)\\)" :: [[String]]
+  let capturedMacros = program =~ "(.*) = @(.*)\\((.*)\\)" :: [[String]]
 
   fst $ foldl
     (\(acc, id:ids) (pattern:macroReturn:macroFile:macroParameters:_) ->
@@ -26,7 +26,7 @@ buildMacro macroFile macroReturn macroParameters macroID = do
   sourceMacro <- readFile $ macroFile ++ ".d"
   let prefix = "_" ++ macroFile ++ "_" ++ show macroID ++ "_"
       bindings =
-        ("__return =", macroReturn) :
+        ("__return", macroReturn) :
         zip
           (map (("__param" ++) . show) [0..])
           macroParameters

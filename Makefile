@@ -1,16 +1,11 @@
-.PHONY:
-configure:
-	cabal configure
+all: install
 
 .PHONY:
-parser:
-	cabal run happy src/Parser.y
+install:
+	cabal install
 
 .PHONY:
-tokenizer:
-	cabal run alex src/Tokenizer.x
-
-build: tokenizer parser configure
+build:
 	cabal build
 
 .PHONY:

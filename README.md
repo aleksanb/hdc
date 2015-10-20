@@ -14,6 +14,16 @@ Thanks to
 ====
 - [Haskell parser examples](https://github.com/ghulette/haskell-parser-examples)
 
+Running
+===
+To run the finished program simply run
+```
+# Mac OS X
+cabal run hdc
+
+# Linux
+hdc
+```
 
 Installation
 ===

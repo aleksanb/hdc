@@ -44,10 +44,23 @@ Follow the instructions given under the installation.
 Setting up your own environment
 ===
 
+### Mac OS X
+
 To set up your environment there are a few this that needs to be done.
 Firstly set up your sandbox and install dependencies.
 ```
 $ cabal sandbox init
+$ cabal install alex
+$ cabal install happy
+```
+
+You should be able to `make` and get a result now!
+
+### Linux
+
+To install things on Linux you need to install the packages globally.
+
+```
 $ cabal install alex
 $ cabal install happy
 ```

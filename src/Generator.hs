@@ -96,9 +96,6 @@ generateExpression (ExpressionItem item) = do
       emitInstruction $ TwoIR reg (C constant) False
       return reg
 
------------------------------------------------
--- Move the functions below to separate file --
------------------------------------------------
 
 getRegister :: State CodeGenState IRItem
 getRegister = do

@@ -50,7 +50,6 @@ Firstly set up your sandbox and install dependencies.
 $ cabal sandbox init
 $ cabal install alex
 $ cabal install happy
-$ cabal install pretty-show
 ```
 
 You should be able to `make` and get a result now!

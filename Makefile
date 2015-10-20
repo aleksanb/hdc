@@ -4,11 +4,11 @@ configure:
 
 .PHONY:
 parser:
-	happy src/Parser.y
+	cabal run happy src/Parser.y
 
 .PHONY:
 tokenizer:
-	alex src/Tokenizer.x
+	cabal run alex src/Tokenizer.x
 
 build: tokenizer parser configure
 	cabal build

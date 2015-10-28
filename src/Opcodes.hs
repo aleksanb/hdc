@@ -27,13 +27,13 @@ mnemonic = map toLower . show
 hexOpcode :: Opcode -> Int
 hexOpcode opcode =
   code `shiftL` 26
-  where code = opcode of
-     Ldc            -> 0x2
-     Addi           -> 0x1
-     Lw             -> 0x8
-     Sw             -> 0x4
-     ThreadFinished -> 0x10
-     _              -> 0x0
+  where code = case opcode of
+          Ldc            -> 0x2
+          Addi           -> 0x1
+          Lw             -> 0x8
+          Sw             -> 0x4
+          ThreadFinished -> 0x10
+          _              -> 0x0
 
 hexAlufunction :: Opcode -> Int
 hexAlufunction opcode =

@@ -13,10 +13,10 @@ assembleInstruction LoadIR = (hexOpcode Lw)
 assembleInstruction StoreIR = (hexOpcode Sw)
 
 assembleInstruction (TwoIR (R reg) (I immediate)  masked) =
-  (hexMask masked) + (hexOpcode Addi) + (hexRt reg) + (immediate `mod` 2**16)
+  (hexMask masked) + (hexOpcode Addi) + (hexRt reg) + (immediate `mod` 2 ^ 16)
 
 assembleInstruction (TwoIR (R reg) (C address) masked) =
-  (hexMask masked) + (hexOpcode Ldc) + (hexRt reg) + (address `mod` 2**16)
+  (hexMask masked) + (hexOpcode Ldc) + (hexRt reg) + (address `mod` 2 ^ 16)
 
 assembleInstruction (ThreeIR operator (R rd) (R rs) (R rt) masked) =
   (hexMask masked) + (hexOpcode opcode) + (hexRd rd) + (hexRs rs) + (hexRt rt) + (hexAlufunction opcode)

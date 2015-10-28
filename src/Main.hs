@@ -32,7 +32,7 @@ main = do
       hex = Assembler.assemble optimized
 
   -- Generate verbose output
-  pPutStrLn verbose $ "Expanded with macros\n" ++ expandedProgram
+  pPutStrLn verbose $ "Expanded with macros\n" ++ expandedProgram
   pPutStrLn verbose $ "syntax tree:\n" ++ Pr.ppShow syntax_tree
   pPutStrLn verbose $ "Ast:\n" ++ Pr.ppShow ast
   pPutStrLn verbose $ "IR:\n" ++ Pr.ppShow ir

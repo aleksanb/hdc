@@ -3,8 +3,12 @@ module Assembler(assemble) where
 import Datatypes
 import Opcodes
 
-assemble :: [IR] -> [Int]
-assemble instructions = (map assembleInstruction instructions)
+import Text.Printf
+
+assemble :: [IR] -> [String]
+assemble instructions =
+  map (printf "0x%08x") hex
+  where hex = map assembleInstruction instructions
 
 assembleInstruction :: IR -> Int
 
